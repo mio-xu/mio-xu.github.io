@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mio — 生活日记</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose:   #c9b8b8;
+    --sage:   #b8c4bc;
+    --sand:   #d4ccc4;
+    --mist:   #bfc8d0;
+    --cream:  #ede8e3;
+    --warm:   #f5f1ed;
+    --text:   #5a5250;
+    --text-lt:#8c8280;
+    --glass-bg: rgba(255,255,255,0.30);
+    --glass-border: rgba(255,255,255,0.58);
+    --glass-shadow: rgba(180,168,165,0.16);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: var(--text);
+    background: var(--warm);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 4rem;
+    background: rgba(245,241,237,0.65);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 300; letter-spacing: 0.18em;
+    color: var(--text); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none; font-size: 0.7rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-lt); transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4rem 8rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 75% 25%, rgba(201,184,184,0.32) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 20% 75%, rgba(184,196,188,0.28) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(212,204,196,0.18) 0%, transparent 60%),
+      var(--warm);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 680px; }
+  .hero-eyebrow {
+    font-size: 0.67rem; letter-spacing: 0.38em; text-transform: uppercase;
+    color: var(--text-lt); margin-bottom: 1rem;
+    opacity: 0; animation: fadeUp 1s 0.4s forwards;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.8rem, 8vw, 7rem);
+    font-weight: 300; line-height: 0.95; letter-spacing: -0.01em;
+    color: var(--text);
+    opacity: 0; animation: fadeUp 1s 0.6s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--rose); }
+  .hero-sub {
+    margin-top: 2rem; font-size: 0.9rem;
+    line-height: 2; color: var(--text-lt); max-width: 40ch;
+    opacity: 0; animation: fadeUp 1s 0.8s forwards;
+  }
+  .hero-scroll {
+    position: absolute; bottom: 3rem; right: 4rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: fadeIn 1s 1.4s forwards;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--text-lt), transparent);
+    animation: scrollPulse 2s 2s infinite;
+  }
+  .scroll-label { font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-lt); }
+
+  /* ABOUT */
+  #about {
+    padding: 9rem 4rem;
+    background:
+      radial-gradient(ellipse 55% 70% at 8% 50%, rgba(184,196,188,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 50% at 92% 20%, rgba(201,184,184,0.18) 0%, transparent 50%),
+      var(--warm);
+  }
+  .about-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 6rem; align-items: center;
+  }
+  .about-text-wrap {}
+  .section-label {
+    font-size: 0.63rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--text-lt); margin-bottom: 0.9rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+    font-weight: 300; line-height: 1.1; color: var(--text); margin-bottom: 2.5rem;
+  }
+  .about-body {
+    font-size: 0.95rem; line-height: 2.1; color: var(--text);
+  }
+  .about-body em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 1.1em; color: var(--rose);
+  }
+  .about-body p + p { margin-top: 1.2rem; }
+  .about-stats {
+    display: flex; gap: 2rem; margin-top: 3rem; flex-wrap: wrap;
+  }
+  .stat {
+    display: flex; flex-direction: column; gap: 0.3rem;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 300; color: var(--text); line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 0.62rem; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-lt);
+  }
+  .stat-div { width: 1px; background: var(--glass-border); align-self: stretch; }
+  .about-imgs { position: relative; height: 520px; }
+  .about-img {
+    position: absolute;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 20px 50px var(--glass-shadow);
+  }
+  .about-img-1 {
+    top: 0; right: 0; width: 74%; aspect-ratio: 3/4;
+    background: linear-gradient(135deg, rgba(201,184,184,0.42), rgba(212,204,196,0.32));
+  }
+  .about-img-2 {
+    bottom: 0; left: 0; width: 52%; aspect-ratio: 2/3;
+    background: linear-gradient(135deg, rgba(184,196,188,0.42), rgba(191,200,208,0.32));
+  }
+  .img-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-lt); opacity: 0.7;
+  }
+
+  /* MAP SECTION */
+  #map-section {
+    padding: 9rem 4rem;
+    background:
+      radial-gradient(ellipse 60% 60% at 50% 100%, rgba(191,200,208,0.25) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 85% 10%, rgba(212,204,196,0.2) 0%, transparent 50%),
+      var(--cream);
+  }
+  .map-header {
+    max-width: 1100px; margin: 0 auto 3.5rem;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .map-counter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem; font-weight: 300;
+    color: var(--text-lt); letter-spacing: 0.08em;
+  }
+  .map-counter span {
+    font-size: 1.6rem; color: var(--text); margin-right: 0.3rem;
+  }
+
+  .map-layout {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 340px; gap: 2rem; align-items: start;
+  }
+
+  .map-wrap {
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px var(--glass-shadow);
+    overflow: hidden;
+    padding: 1.5rem;
+  }
+
+  #world-map {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .map-city-dot {
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .map-city-dot circle {
+    fill: var(--rose);
+    stroke: white;
+    stroke-width: 1.5;
+    filter: drop-shadow(0 2px 6px rgba(201,184,184,0.6));
+    transition: all 0.3s;
+  }
+  .map-city-dot:hover circle,
+  .map-city-dot.active circle {
+    fill: var(--text);
+    r: 7;
+  }
+  .map-city-dot text {
+    font-family: 'Jost', sans-serif;
+    font-size: 9px; font-weight: 300;
+    fill: var(--text); letter-spacing: 0.1em;
+    pointer-events: none;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .map-city-dot:hover text,
+  .map-city-dot.active text { opacity: 1; }
+
+  /* CITY PANEL */
+  .city-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px var(--glass-shadow);
+    overflow: hidden;
+    min-height: 480px;
+    display: flex; flex-direction: column;
+  }
+  .city-panel-header {
+    padding: 1.8rem 2rem 1.4rem;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .city-panel-hint {
+    font-size: 0.75rem; letter-spacing: 0.12em;
+    color: var(--text-lt); line-height: 1.8;
+    padding: 2rem;
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .city-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 300; color: var(--text);
+    letter-spacing: 0.05em; margin-bottom: 0.3rem;
+  }
+  .city-meta {
+    font-size: 0.65rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--text-lt);
+  }
+  .city-photos {
+    padding: 1.5rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;
+    flex: 1;
+  }
+  .city-photo {
+    aspect-ratio: 3/4;
+    border-radius: 3px;
+    border: 1px solid var(--glass-border);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.5rem;
+    cursor: pointer; overflow: hidden; position: relative;
+    transition: transform 0.3s;
+  }
+  .city-photo:hover { transform: scale(1.02); }
+  .city-photo-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.5s;
+  }
+  .city-photo:hover .city-photo-bg { transform: scale(1.06); }
+  .city-photo-date {
+    position: absolute; bottom: 0.6rem; left: 0.6rem;
+    font-size: 0.58rem; letter-spacing: 0.15em;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    padding: 0.2rem 0.5rem; border-radius: 100px;
+    color: var(--text);
+  }
+  .city-photo-ph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    color: var(--text-lt); text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .city-photo:first-child {
+    grid-column: 1 / -1; aspect-ratio: 16/9;
+  }
+
+  /* CONTACT */
+  #contact {
+    padding: 9rem 4rem;
+    background:
+      radial-gradient(ellipse 55% 80% at 50% 110%, rgba(201,184,184,0.28) 0%, transparent 55%),
+      var(--warm);
+    text-align: center;
+  }
+  .contact-inner { max-width: 600px; margin: 0 auto; }
+  .contact-card {
+    margin-top: 3rem;
+    padding: 3.5rem 3rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px var(--glass-shadow);
+  }
+  .contact-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-style: italic; font-weight: 300;
+    line-height: 2; color: var(--text); margin-bottom: 2.8rem;
+  }
+  .rednote-link {
+    display: inline-flex; flex-direction: column; align-items: center; gap: 0.8rem;
+    text-decoration: none; transition: transform 0.3s;
+  }
+  .rednote-link:hover { transform: translateY(-3px); }
+  .rednote-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, #fe2c55, #ff6b81);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 20px rgba(254,44,85,0.25);
+    font-size: 1.5rem;
+  }
+  .rednote-label { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-lt); }
+  .rednote-handle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-weight: 300; color: var(--text); letter-spacing: 0.05em;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--glass-border);
+    background: rgba(245,241,237,0.5);
+    backdrop-filter: blur(10px);
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; letter-spacing: 0.18em; color: var(--text-lt);
+  }
+  .footer-copy { font-size: 0.62rem; letter-spacing: 0.12em; color: var(--text-lt); opacity: 0.6; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes scrollPulse {
+    0%,100% { opacity: 0.4; } 50% { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.85s cubic-bezier(0.25,0.46,0.45,0.94),
+                transform 0.85s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.3rem 1.5rem; }
+    #hero, #about, #map-section, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .about-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .about-imgs { height: 340px; }
+    .map-layout { grid-template-columns: 1fr; }
+    .map-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    footer { flex-direction: column; gap: 0.8rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">MIO</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#map-section">Places</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">生活 · 穿搭 · 记录</p>
+    <h1 class="hero-title">Hello,<br>I'm <em>Mio</em></h1>
+    <p class="hero-sub">
+      用镜头记录每一个值得被记住的瞬间——<br>
+      街角的光，旅途的风，还有每天穿搭的小心情。
+    </p>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-text-wrap reveal">
+      <p class="section-label">About Me</p>
+      <h2 class="section-title">关于<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">我</em></h2>
+      <div class="about-body">
+        <p>我是 <em>Mio</em>，一个喜欢用照片记录生活的普通女生。</p>
+        <p>热爱时尚穿搭，但更享受把日常穿出自己的感觉。相机是我随身携带的日记本，记录路边盛开的野花、城市里有趣的光影，还有偶遇的流浪猫。</p>
+        <p>这里是我的小小世界，欢迎你来逛逛。</p>
+      </div>
+      <div class="about-stats">
+        <div class="stat">
+          <div class="stat-num">15</div>
+          <div class="stat-lbl">Cities</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-num">∞</div>
+          <div class="stat-lbl">Photos</div>
+        </div>
+        <div class="stat-div"></div>
+        <div class="stat">
+          <div class="stat-num">1</div>
+          <div class="stat-lbl">Me</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-imgs reveal">
+      <div class="about-img about-img-1">
+        <span class="img-label">Your Photo</span>
+      </div>
+      <div class="about-img about-img-2">
+        <span class="img-label">Photo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<section id="map-section">
+  <div class="map-header reveal">
+    <div>
+      <p class="section-label">Places I've Been</p>
+      <h2 class="section-title">去过的<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">地方</em></h2>
+    </div>
+    <div class="map-counter"><span>6</span> cities on the map</div>
+  </div>
+
+  <div class="map-layout reveal">
+    <div class="map-wrap">
+      <!-- WORLD MAP SVG (simplified equirectangular projection) -->
+      <svg id="world-map" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+        <!-- ocean background -->
+        <rect width="1000" height="500" fill="rgba(191,200,208,0.15)" rx="6"/>
+
+        <!-- Simplified continents -->
+        <!-- North America -->
+        <path d="M 80 60 L 160 55 L 200 70 L 210 90 L 220 110 L 215 135 L 200 155 L 190 180 L 175 200 L 160 215 L 145 225 L 130 220 L 120 200 L 110 180 L 95 160 L 80 140 L 70 115 L 68 90 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Central America / Caribbean -->
+        <path d="M 175 225 L 185 235 L 190 250 L 180 255 L 170 245 L 165 230 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- South America -->
+        <path d="M 195 255 L 230 245 L 260 255 L 275 280 L 280 310 L 275 340 L 265 370 L 250 395 L 235 415 L 220 425 L 205 415 L 195 395 L 185 365 L 180 335 L 178 305 L 180 275 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Greenland -->
+        <path d="M 175 30 L 210 25 L 230 35 L 225 55 L 205 60 L 185 55 L 170 45 Z" fill="rgba(212,204,196,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Europe -->
+        <path d="M 440 55 L 470 50 L 500 55 L 515 65 L 510 80 L 495 90 L 480 95 L 465 100 L 450 95 L 440 85 L 435 70 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Scandinavia -->
+        <path d="M 460 35 L 480 30 L 495 40 L 490 55 L 475 58 L 460 50 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Africa -->
+        <path d="M 450 115 L 490 110 L 520 120 L 535 145 L 540 175 L 535 210 L 525 245 L 510 275 L 495 300 L 480 315 L 465 310 L 450 295 L 438 265 L 430 235 L 428 205 L 430 175 L 435 145 L 440 125 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Madagascar -->
+        <path d="M 540 250 L 550 245 L 558 255 L 555 270 L 545 275 L 538 265 Z" fill="rgba(212,204,196,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Russia / North Asia -->
+        <path d="M 510 40 L 600 30 L 700 35 L 780 45 L 820 55 L 830 70 L 810 80 L 780 82 L 750 80 L 710 78 L 670 75 L 630 78 L 595 82 L 565 85 L 540 80 L 520 70 L 510 58 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Middle East -->
+        <path d="M 530 100 L 565 95 L 590 105 L 600 120 L 595 135 L 575 140 L 555 135 L 538 125 L 528 112 Z" fill="rgba(201,184,184,0.45)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- South Asia / India -->
+        <path d="M 610 110 L 645 105 L 670 115 L 675 135 L 670 160 L 660 185 L 645 200 L 630 195 L 618 178 L 610 155 L 605 130 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Southeast Asia -->
+        <path d="M 700 130 L 740 125 L 760 135 L 755 155 L 740 165 L 720 160 L 705 148 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- China / East Asia -->
+        <path d="M 680 75 L 750 72 L 790 80 L 800 95 L 795 115 L 780 130 L 755 135 L 725 130 L 700 125 L 678 115 L 668 98 L 670 85 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Korea peninsula -->
+        <path d="M 790 98 L 804 95 L 812 103 L 810 116 L 800 120 L 790 113 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Japan -->
+        <path d="M 818 85 L 835 80 L 845 88 L 842 100 L 830 105 L 818 98 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- Australia -->
+        <path d="M 760 290 L 820 275 L 870 280 L 900 300 L 910 330 L 900 360 L 875 380 L 840 390 L 805 385 L 775 370 L 755 345 L 748 315 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- New Zealand -->
+        <path d="M 920 365 L 932 358 L 938 368 L 932 378 L 920 375 Z" fill="rgba(212,204,196,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- UK / Ireland -->
+        <path d="M 435 58 L 444 54 L 450 60 L 447 70 L 438 72 L 432 65 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+
+        <!-- CITY DOTS -->
+        <!-- Tokyo: approx x=830, y=100 -->
+        <g class="map-city-dot" data-city="tokyo" transform="translate(830, 98)">
+          <circle r="5" />
+          <text x="8" y="-8">Tokyo</text>
+        </g>
+        <!-- Paris: approx x=455, y=72 -->
+        <g class="map-city-dot" data-city="paris" transform="translate(455, 72)">
+          <circle r="5" />
+          <text x="8" y="-8">Paris</text>
+        </g>
+        <!-- Busan: approx x=802, y=108 -->
+        <g class="map-city-dot" data-city="busan" transform="translate(802, 110)">
+          <circle r="5" />
+          <text x="8" y="-8">Busan</text>
+        </g>
+        <!-- Daegu: approx x=796, y=103 -->
+        <g class="map-city-dot" data-city="daegu" transform="translate(796, 103)">
+          <circle r="5" />
+          <text x="-40" y="-8">Daegu</text>
+        </g>
+        <!-- Wuhan: approx x=755, y=115 -->
+        <g class="map-city-dot" data-city="wuhan" transform="translate(755, 115)">
+          <circle r="5" />
+          <text x="8" y="-8">Wuhan</text>
+        </g>
+        <!-- Guangzhou: approx x=748, y=130 -->
+        <g class="map-city-dot" data-city="guangzhou" transform="translate(748, 130)">
+          <circle r="5" />
+          <text x="8" y="-8">Guangzhou</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- CITY PANEL -->
+    <div class="city-panel" id="city-panel">
+      <div class="city-panel-header" id="panel-header" style="display:none">
+        <div class="city-name" id="panel-city-name"></div>
+        <div class="city-meta" id="panel-city-meta"></div>
+      </div>
+      <div class="city-panel-hint" id="panel-hint">
+        <div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:var(--text);margin-bottom:0.6rem;">点击地图上的城市</p>
+          <p>查看那里拍摄的照片 ✦</p>
+        </div>
+      </div>
+      <div class="city-photos" id="panel-photos" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="section-label reveal">Find Me</p>
+    <h2 class="section-title reveal">来找<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">我</em></h2>
+    <div class="contact-card reveal">
+      <p class="contact-quote">
+        "生活里的小确幸，<br>都在这里了。"
+      </p>
+      <a href="https://www.xiaohongshu.com/user/profile/mio_xu" target="_blank" class="rednote-link">
+        <div class="rednote-icon">📕</div>
+        <span class="rednote-label">小红书 / RED</span>
+        <span class="rednote-handle">@mio_xu</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">MIO</div>
+  <div class="footer-copy">© 2026 Mio · 用照片记录生活</div>
+</footer>
+
+<script>
+// City data
+const cityData = {
+  tokyo: {
+    name: 'Tokyo',
+    meta: '东京 · 日本',
+    photos: [
+      { label: 'Cover Shot', date: '2024.03', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
+      { label: 'Street', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+      { label: 'Café', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
+    ]
+  },
+  paris: {
+    name: 'Paris',
+    meta: '巴黎 · 法国',
+    photos: [
+      { label: 'Eiffel', date: '2023.09', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
+      { label: 'Marais', date: '2023.09', color: 'rgba(201,184,184,0.45), rgba(191,200,208,0.35)' },
+      { label: 'Seine', date: '2023.09', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
+    ]
+  },
+  busan: {
+    name: 'Busan',
+    meta: '釜山 · 韩国',
+    photos: [
+      { label: 'Beach', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
+      { label: 'Gamcheon', date: '2023.07', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
+      { label: 'Market', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+    ]
+  },
+  daegu: {
+    name: 'Daegu',
+    meta: '大邱 · 韩国',
+    photos: [
+      { label: 'Alley', date: '2023.07', color: 'rgba(212,204,196,0.45), rgba(201,184,184,0.35)' },
+      { label: 'Cafe Street', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
+      { label: 'Park', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
+    ]
+  },
+  wuhan: {
+    name: 'Wuhan',
+    meta: '武汉 · 中国',
+    photos: [
+      { label: 'Cherry Blossoms', date: '2024.03', color: 'rgba(201,184,184,0.5), rgba(212,204,196,0.4)' },
+      { label: 'Yellow Crane', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+      { label: 'Hankou', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
+    ]
+  },
+  guangzhou: {
+    name: 'Guangzhou',
+    meta: '广州 · 中国',
+    photos: [
+      { label: 'Canton Tower', date: '2023.12', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
+      { label: 'Shamian', date: '2023.12', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
+      { label: 'Night Market', date: '2023.12', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+    ]
+  }
+};
+
+// Map interaction
+const dots = document.querySelectorAll('.map-city-dot');
+const panelHeader = document.getElementById('panel-header');
+const panelHint = document.getElementById('panel-hint');
+const panelPhotos = document.getElementById('panel-photos');
+const panelCityName = document.getElementById('panel-city-name');
+const panelCityMeta = document.getElementById('panel-city-meta');
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const city = dot.dataset.city;
+    const data = cityData[city];
+
+    // Update active dot
+    dots.forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+
+    // Update panel header
+    panelCityName.textContent = data.name;
+    panelCityMeta.textContent = data.meta;
+    panelHeader.style.display = 'block';
+    panelHint.style.display = 'none';
+
+    // Build photos
+    panelPhotos.style.display = 'grid';
+    panelPhotos.innerHTML = data.photos.map((p, i) => `
+      <div class="city-photo" style="${i===0?'grid-column:1/-1;aspect-ratio:16/9;':''}">
+        <div class="city-photo-bg" style="background:linear-gradient(135deg,${p.color});"></div>
+        <span class="city-photo-ph">${p.label}</span>
+        <span class="city-photo-date">${p.date}</span>
+      </div>
+    `).join('');
+  });
+});
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
