@@ -201,13 +201,30 @@
     box-shadow: 0 8px 32px var(--glass-shadow);
     overflow: hidden;
     padding: 1.5rem;
+    cursor: grab;
+    user-select: none;
   }
+  .map-wrap.dragging { cursor: grabbing; }
 
   #world-map {
     width: 100%;
     height: auto;
     display: block;
   }
+
+  .map-zoom-controls {
+    position: absolute; bottom: 1rem; right: 1rem;
+    display: flex; flex-direction: column; gap: 4px; z-index: 2;
+  }
+  .map-zoom-btn {
+    width: 26px; height: 26px;
+    background: var(--glass-bg); backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border); border-radius: 4px;
+    color: var(--text); font-size: 14px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .map-zoom-btn:hover { background: rgba(201,184,184,0.3); }
 
   .map-city-dot {
     cursor: pointer;
@@ -301,17 +318,52 @@
     padding: 0.2rem 0.5rem; border-radius: 100px;
     color: var(--text);
   }
-  .city-carousel-dots {
-    display: flex; justify-content: center; gap: 0.4rem;
-    padding: 0.75rem 0; background: transparent;
+  .carousel-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 3; background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(8px); border: none; border-radius: 50%;
+    width: 32px; height: 32px; cursor: pointer;
+    font-size: 20px; line-height: 1; color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s, background 0.2s;
   }
-  .carousel-dot {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--glass-border); border: none; cursor: pointer;
-    padding: 0; transition: background 0.3s, transform 0.3s;
+  .city-carousel:hover .carousel-arrow { opacity: 1; }
+  .carousel-arrow:hover { background: rgba(255,255,255,0.95); }
+  .carousel-arrow.prev { left: 0.75rem; }
+  .carousel-arrow.next { right: 0.75rem; }
+
+  #photo-lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(212,204,196,0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+    cursor: zoom-out;
   }
-  .carousel-dot.active {
-    background: var(--rose); transform: scale(1.4);
+  #photo-lightbox.visible { opacity: 1; pointer-events: auto; }
+  .lightbox-glass {
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 20px 60px rgba(180,168,160,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+    max-width: 88vw; max-height: 88vh;
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    cursor: default;
+  }
+  #lightbox-img {
+    max-width: 80vw; max-height: 78vh;
+    object-fit: contain; border-radius: 6px;
+    display: block;
+  }
+  .lightbox-meta {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem; letter-spacing: 0.18em;
+    color: var(--text-lt); text-transform: uppercase; opacity: 0.8;
   }
 
   /* CONTACT */
@@ -517,38 +569,13 @@
         <!-- UK / Ireland -->
         <path d="M 435 58 L 444 54 L 450 60 L 447 70 L 438 72 L 432 65 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
 
-        <!-- CITY DOTS -->
-        <!-- Tokyo: approx x=830, y=100 -->
-        <g class="map-city-dot" data-city="tokyo" transform="translate(830, 98)">
-          <circle r="5" />
-          <text x="8" y="-8">Tokyo</text>
-        </g>
-        <!-- Paris: approx x=455, y=72 -->
-        <g class="map-city-dot" data-city="paris" transform="translate(455, 72)">
-          <circle r="5" />
-          <text x="8" y="-8">Paris</text>
-        </g>
-        <!-- Busan: approx x=802, y=108 -->
-        <g class="map-city-dot" data-city="busan" transform="translate(802, 110)">
-          <circle r="5" />
-          <text x="8" y="-8">Busan</text>
-        </g>
-        <!-- Daegu: approx x=796, y=103 -->
-        <g class="map-city-dot" data-city="daegu" transform="translate(796, 103)">
-          <circle r="5" />
-          <text x="-40" y="-8">Daegu</text>
-        </g>
-        <!-- Wuhan: approx x=755, y=115 -->
-        <g class="map-city-dot" data-city="wuhan" transform="translate(755, 115)">
-          <circle r="5" />
-          <text x="8" y="-8">Wuhan</text>
-        </g>
-        <!-- Guangzhou: approx x=748, y=130 -->
-        <g class="map-city-dot" data-city="guangzhou" transform="translate(748, 130)">
-          <circle r="5" />
-          <text x="8" y="-8">Guangzhou</text>
-        </g>
+        <!-- city dots rendered dynamically by JS -->
       </svg>
+      <div class="map-zoom-controls">
+        <button class="map-zoom-btn" id="zoom-in">+</button>
+        <button class="map-zoom-btn" id="zoom-out">−</button>
+        <button class="map-zoom-btn" id="zoom-reset" title="reset">⊙</button>
+      </div>
     </div>
 
     <!-- CITY PANEL -->
@@ -565,7 +592,6 @@
       </div>
       <div class="city-carousel" id="panel-carousel" style="display:none">
         <div class="city-carousel-track" id="carousel-track"></div>
-        <div class="city-carousel-dots" id="carousel-dots"></div>
       </div>
     </div>
   </div>
@@ -594,46 +620,93 @@
   <div class="footer-copy">© 2026 Mio · 用照片记录生活</div>
 </footer>
 
+<div id="photo-lightbox">
+  <div class="lightbox-glass">
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-meta" id="lightbox-meta"></div>
+  </div>
+</div>
+
 <script>
-// City metadata — photos loaded from photos.json
+// City metadata — lat/lon used to compute SVG dot position automatically
+// Formula calibrated to the hand-drawn SVG continents (viewBox 0 0 1000 500):
+//   x = lon * 2.731 + 448.58
+//   y = -lat * 1.974 + 168.42
+// lx/ly: label offset from dot (default: right 8, up 8)
 const cityData = {
-  tokyo:     { name: 'Tokyo',     meta: '东京 · 日本' },
-  paris:     { name: 'Paris',     meta: '巴黎 · 法国' },
-  busan:     { name: 'Busan',     meta: '釜山 · 韩国' },
-  daegu:     { name: 'Daegu',     meta: '大邱 · 韩国' },
-  wuhan:     { name: 'Wuhan',     meta: '武汉 · 中国' },
-  guangzhou: { name: 'Guangzhou', meta: '广州 · 中国' },
-  yokohama:  { name: 'Yokohama',  meta: '横滨 · 日本' },
+  tokyo:     { name: 'Tokyo',     meta: '东京 · 日本', lat: 35.68, lon: 139.69 },
+  paris:     { name: 'Paris',     meta: '巴黎 · 法国', lat: 48.85, lon:   2.35 },
+  busan:     { name: 'Busan',     meta: '釜山 · 韩国', lat: 35.10, lon: 129.05 },
+  daegu:     { name: 'Daegu',     meta: '大邱 · 韩国', lat: 35.87, lon: 128.60, lx: -40 },
+  wuhan:     { name: 'Wuhan',     meta: '武汉 · 中国', lat: 30.59, lon: 114.30 },
+  guangzhou: { name: 'Guangzhou', meta: '广州 · 中国', lat: 23.13, lon: 113.28 },
+  yokohama:  { name: 'Yokohama',  meta: '横滨 · 日本', lat: 35.44, lon: 139.64, lx: -52 },
 };
 
+function latLonToSVG(lat, lon) {
+  return { x: Math.round(lon * 2.731 + 448.58), y: Math.round(-lat * 1.974 + 168.42) };
+}
+
 let allPhotos = {};
-fetch('photos.json').then(r => r.json()).then(d => { allPhotos = d; }).catch(() => {});
+
+function renderMapDots() {
+  const svg = document.getElementById('world-map');
+  svg.querySelectorAll('.map-city-dot').forEach(d => d.remove());
+
+  const active = Object.entries(cityData)
+    .filter(([key]) => allPhotos[key] && allPhotos[key].length > 0);
+
+  document.querySelector('.map-counter span').textContent = active.length || 0;
+
+  active.forEach(([key, city]) => {
+    const { x, y } = latLonToSVG(city.lat, city.lon);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.classList.add('map-city-dot');
+    g.dataset.city = key;
+    g.setAttribute('transform', `translate(${x},${y})`);
+    g.innerHTML = `<circle r="5"/><text x="${city.lx ?? 8}" y="${city.ly ?? -8}">${city.name}</text>`;
+    svg.appendChild(g);
+  });
+
+  attachDotHandlers();
+}
+
+fetch('photos.json').then(r => r.json()).then(d => { allPhotos = d; renderMapDots(); }).catch(() => renderMapDots());
 
 // Carousel state
 let carouselTimer = null;
 let currentSlide = 0;
 let _enterH = null, _leaveH = null;
 
-function goToSlide(index, slides, dotEls) {
+function goToSlide(index, slides) {
   slides[currentSlide].classList.remove('active');
-  dotEls[currentSlide].classList.remove('active');
   currentSlide = (index + slides.length) % slides.length;
   slides[currentSlide].classList.add('active');
-  dotEls[currentSlide].classList.add('active');
+  // sync lightbox if open
+  const lb = document.getElementById('photo-lightbox');
+  if (lb.classList.contains('visible')) {
+    const sl = slides[currentSlide];
+    if (sl.dataset.src) {
+      document.getElementById('lightbox-img').src = sl.dataset.src;
+      document.getElementById('lightbox-meta').textContent =
+        [sl.dataset.location, sl.dataset.date].filter(Boolean).join('  ·  ');
+    }
+  }
 }
 
 function startCarousel(photos) {
   const carousel = document.getElementById('panel-carousel');
   const track    = document.getElementById('carousel-track');
-  const dotsEl   = document.getElementById('carousel-dots');
 
   clearInterval(carouselTimer);
   currentSlide = 0;
   track.innerHTML = '';
-  dotsEl.innerHTML = '';
+  carousel.querySelectorAll('.carousel-arrow').forEach(a => a.remove());
 
   if (_enterH) carousel.removeEventListener('mouseenter', _enterH);
   if (_leaveH) carousel.removeEventListener('mouseleave', _leaveH);
+
+  document.getElementById('photo-lightbox').classList.remove('visible');
 
   if (!photos || photos.length === 0) {
     track.innerHTML = '<div class="city-slide active" style="display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Cormorant Garamond\',serif;font-size:0.75rem;letter-spacing:0.2em;color:var(--text-lt);opacity:0.5;text-transform:uppercase;">No Photos Yet</span></div>';
@@ -644,8 +717,10 @@ function startCarousel(photos) {
   photos.forEach((p, i) => {
     const slide = document.createElement('div');
     slide.className = 'city-slide' + (i === 0 ? ' active' : '');
+    slide.dataset.src      = p.src;
+    slide.dataset.location = p.location || '';
+    slide.dataset.date     = p.date     || '';
     slide.style.background = 'linear-gradient(135deg,rgba(201,184,184,0.3),rgba(191,200,208,0.3))';
-
     const img = new Image();
     img.onload = () => {
       slide.style.backgroundImage = `url('${p.src}')`;
@@ -653,56 +728,174 @@ function startCarousel(photos) {
       slide.style.backgroundPosition = 'center';
     };
     img.src = p.src;
-
     const info = document.createElement('div');
     info.className = 'city-slide-info';
     info.innerHTML = (p.location ? `<span class="city-slide-label">${p.location}</span>` : '')
                    + `<span class="city-slide-date">${p.date}</span>`;
     slide.appendChild(info);
     track.appendChild(slide);
-
-    const dot = document.createElement('button');
-    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-    dotsEl.appendChild(dot);
   });
 
   const slides = track.querySelectorAll('.city-slide');
-  const dotEls = dotsEl.querySelectorAll('.carousel-dot');
-  dotEls.forEach((dot, i) => dot.addEventListener('click', () => { goToSlide(i, slides, dotEls); resetTimer(); }));
+
+  // Arrows
+  [['prev', '‹', -1], ['next', '›', 1]].forEach(([cls, icon, delta]) => {
+    const btn = document.createElement('button');
+    btn.className = `carousel-arrow ${cls}`;
+    btn.innerHTML = icon;
+    btn.addEventListener('click', () => { goToSlide(currentSlide + delta, slides); resetTimer(); });
+    carousel.appendChild(btn);
+  });
 
   function resetTimer() {
     clearInterval(carouselTimer);
-    carouselTimer = setInterval(() => goToSlide(currentSlide + 1, slides, dotEls), 3000);
+    if (slides.length > 1)
+      carouselTimer = setInterval(() => goToSlide(currentSlide + 1, slides), 3500);
   }
 
+  // Hover: pause auto-play only
   _enterH = () => clearInterval(carouselTimer);
   _leaveH = () => resetTimer();
   carousel.addEventListener('mouseenter', _enterH);
   carousel.addEventListener('mouseleave', _leaveH);
+
+  // Click: open lightbox
+  track.style.cursor = 'zoom-in';
+  track.addEventListener('click', () => {
+    const src = slides[currentSlide].dataset.src;
+    const p   = photos[currentSlide];
+    if (!src) return;
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-meta').textContent =
+      [p.location, p.date].filter(Boolean).join('  ·  ');
+    document.getElementById('photo-lightbox').classList.add('visible');
+  });
   carousel.style.display = 'flex';
   resetTimer();
 }
 
-// Map interaction
-const dots = document.querySelectorAll('.map-city-dot');
+// Map interaction — called after dots are rendered
 const panelHeader   = document.getElementById('panel-header');
 const panelHint     = document.getElementById('panel-hint');
 const panelCityName = document.getElementById('panel-city-name');
 const panelCityMeta = document.getElementById('panel-city-meta');
 
-dots.forEach(dot => {
-  dot.addEventListener('click', () => {
-    const city = dot.dataset.city;
-    const data = cityData[city];
-    dots.forEach(d => d.classList.remove('active'));
-    dot.classList.add('active');
-    panelCityName.textContent = data.name;
-    panelCityMeta.textContent = data.meta;
-    panelHeader.style.display = 'block';
-    panelHint.style.display = 'none';
-    startCarousel(allPhotos[city] || []);
+function attachDotHandlers() {
+  document.querySelectorAll('.map-city-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      if (mapDragged) return;
+      const city = dot.dataset.city;
+      const data = cityData[city];
+      document.querySelectorAll('.map-city-dot').forEach(d => d.classList.remove('active'));
+      dot.classList.add('active');
+      panelCityName.textContent = data.name;
+      panelCityMeta.textContent = data.meta;
+      panelHeader.style.display = 'block';
+      panelHint.style.display = 'none';
+      startCarousel(allPhotos[city] || []);
+    });
   });
+}
+
+// Lightbox close
+document.getElementById('photo-lightbox').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('visible');
 });
+
+// Map zoom & pan
+let mapDragged = false;
+(function () {
+  const svg  = document.getElementById('world-map');
+  const wrap = svg.closest('.map-wrap');
+  const INIT = { x: 0, y: 0, w: 1000, h: 500 };
+  const MIN_W = 120, MAX_W = 1000;
+  let vb = { ...INIT };
+
+  function apply() {
+    svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  function svgPt(clientX, clientY) {
+    const r = svg.getBoundingClientRect();
+    return {
+      x: vb.x + (clientX - r.left)  / r.width  * vb.w,
+      y: vb.y + (clientY - r.top)   / r.height * vb.h,
+    };
+  }
+
+  function zoomTo(factor, cx, cy) {
+    const newW = clamp(vb.w * factor, MIN_W, MAX_W);
+    const newH = newW * 0.5;
+    const k    = newW / vb.w;
+    vb.x = clamp(cx - (cx - vb.x) * k, -200, 1200 - newW);
+    vb.y = clamp(cy - (cy - vb.y) * k, -100,  600 - newH);
+    vb.w = newW; vb.h = newH;
+    apply();
+  }
+
+  // Wheel
+  svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    const { x, y } = svgPt(e.clientX, e.clientY);
+    zoomTo(e.deltaY > 0 ? 1.18 : 0.85, x, y);
+  }, { passive: false });
+
+  // Mouse drag
+  let drag = null;
+  svg.addEventListener('mousedown', e => {
+    drag = { sx: e.clientX, sy: e.clientY, vbx: vb.x, vby: vb.y };
+    mapDragged = false;
+    wrap.classList.add('dragging');
+  });
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 4) mapDragged = true;
+    const r  = svg.getBoundingClientRect();
+    vb.x = drag.vbx - (e.clientX - drag.sx) / r.width  * vb.w;
+    vb.y = drag.vby - (e.clientY - drag.sy) / r.height * vb.h;
+    apply();
+  });
+  window.addEventListener('mouseup', () => { drag = null; wrap.classList.remove('dragging'); });
+
+  // Touch drag & pinch
+  let t0 = null, pinchDist = null;
+  svg.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, vbx: vb.x, vby: vb.y };
+      mapDragged = false;
+    } else if (e.touches.length === 2) {
+      pinchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }, { passive: true });
+  svg.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 2 && pinchDist) {
+      const d  = Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
+                             e.touches[0].clientY - e.touches[1].clientY);
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const p  = svgPt(cx, cy);
+      zoomTo(pinchDist / d, p.x, p.y);
+      pinchDist = d;
+    } else if (e.touches.length === 1 && t0) {
+      const r  = svg.getBoundingClientRect();
+      if (Math.hypot(e.touches[0].clientX - t0.x, e.touches[0].clientY - t0.y) > 4) mapDragged = true;
+      vb.x = t0.vbx - (e.touches[0].clientX - t0.x) / r.width  * vb.w;
+      vb.y = t0.vby - (e.touches[0].clientY - t0.y) / r.height * vb.h;
+      apply();
+    }
+  }, { passive: false });
+  svg.addEventListener('touchend', () => { t0 = null; pinchDist = null; });
+
+  // Buttons
+  document.getElementById('zoom-in').addEventListener('click',    () => zoomTo(0.65, vb.x + vb.w / 2, vb.y + vb.h / 2));
+  document.getElementById('zoom-out').addEventListener('click',   () => zoomTo(1.55, vb.x + vb.w / 2, vb.y + vb.h / 2));
+  document.getElementById('zoom-reset').addEventListener('click', () => { vb = { ...INIT }; apply(); });
+})();
 
 // Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
