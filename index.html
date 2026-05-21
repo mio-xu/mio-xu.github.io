@@ -595,61 +595,24 @@
 </footer>
 
 <script>
-// City data
+// City metadata — photos loaded from photos.json
 const cityData = {
-  tokyo: {
-    name: 'Tokyo', meta: '东京 · 日本',
-    photos: [
-      { src: 'images/cities/tokyo/1.jpg', label: 'Cover Shot', date: '2024.03', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
-      { src: 'images/cities/tokyo/2.jpg', label: 'Street', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
-      { src: 'images/cities/tokyo/3.jpg', label: 'Café', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
-    ]
-  },
-  paris: {
-    name: 'Paris', meta: '巴黎 · 法国',
-    photos: [
-      { src: 'images/cities/paris/1.jpg', label: 'Eiffel', date: '2023.09', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
-      { src: 'images/cities/paris/2.jpg', label: 'Marais', date: '2023.09', color: 'rgba(201,184,184,0.45), rgba(191,200,208,0.35)' },
-      { src: 'images/cities/paris/3.jpg', label: 'Seine', date: '2023.09', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
-    ]
-  },
-  busan: {
-    name: 'Busan', meta: '釜山 · 韩国',
-    photos: [
-      { src: 'images/cities/busan/1.jpg', label: 'Beach', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
-      { src: 'images/cities/busan/2.jpg', label: 'Gamcheon', date: '2023.07', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
-      { src: 'images/cities/busan/3.jpg', label: 'Market', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
-    ]
-  },
-  daegu: {
-    name: 'Daegu', meta: '大邱 · 韩国',
-    photos: [
-      { src: 'images/cities/daegu/1.jpg', label: 'Alley', date: '2023.07', color: 'rgba(212,204,196,0.45), rgba(201,184,184,0.35)' },
-      { src: 'images/cities/daegu/2.jpg', label: 'Cafe Street', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
-      { src: 'images/cities/daegu/3.jpg', label: 'Park', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
-    ]
-  },
-  wuhan: {
-    name: 'Wuhan', meta: '武汉 · 中国',
-    photos: [
-      { src: 'images/cities/wuhan/1.jpg', label: 'Cherry Blossoms', date: '2024.03', color: 'rgba(201,184,184,0.5), rgba(212,204,196,0.4)' },
-      { src: 'images/cities/wuhan/2.jpg', label: 'Yellow Crane', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
-      { src: 'images/cities/wuhan/3.jpg', label: 'Hankou', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
-    ]
-  },
-  guangzhou: {
-    name: 'Guangzhou', meta: '广州 · 中国',
-    photos: [
-      { src: 'images/cities/guangzhou/1.jpg', label: 'Canton Tower', date: '2023.12', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
-      { src: 'images/cities/guangzhou/2.jpg', label: 'Shamian', date: '2023.12', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
-      { src: 'images/cities/guangzhou/3.jpg', label: 'Night Market', date: '2023.12', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
-    ]
-  }
+  tokyo:     { name: 'Tokyo',     meta: '东京 · 日本' },
+  paris:     { name: 'Paris',     meta: '巴黎 · 法国' },
+  busan:     { name: 'Busan',     meta: '釜山 · 韩国' },
+  daegu:     { name: 'Daegu',     meta: '大邱 · 韩国' },
+  wuhan:     { name: 'Wuhan',     meta: '武汉 · 中国' },
+  guangzhou: { name: 'Guangzhou', meta: '广州 · 中国' },
+  yokohama:  { name: 'Yokohama',  meta: '横滨 · 日本' },
 };
+
+let allPhotos = {};
+fetch('photos.json').then(r => r.json()).then(d => { allPhotos = d; }).catch(() => {});
 
 // Carousel state
 let carouselTimer = null;
 let currentSlide = 0;
+let _enterH = null, _leaveH = null;
 
 function goToSlide(index, slides, dotEls) {
   slides[currentSlide].classList.remove('active');
@@ -660,56 +623,70 @@ function goToSlide(index, slides, dotEls) {
 }
 
 function startCarousel(photos) {
-  const track = document.getElementById('carousel-track');
-  const dotsEl = document.getElementById('carousel-dots');
   const carousel = document.getElementById('panel-carousel');
+  const track    = document.getElementById('carousel-track');
+  const dotsEl   = document.getElementById('carousel-dots');
 
   clearInterval(carouselTimer);
   currentSlide = 0;
   track.innerHTML = '';
   dotsEl.innerHTML = '';
 
+  if (_enterH) carousel.removeEventListener('mouseenter', _enterH);
+  if (_leaveH) carousel.removeEventListener('mouseleave', _leaveH);
+
+  if (!photos || photos.length === 0) {
+    track.innerHTML = '<div class="city-slide active" style="display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Cormorant Garamond\',serif;font-size:0.75rem;letter-spacing:0.2em;color:var(--text-lt);opacity:0.5;text-transform:uppercase;">No Photos Yet</span></div>';
+    carousel.style.display = 'flex';
+    return;
+  }
+
   photos.forEach((p, i) => {
     const slide = document.createElement('div');
     slide.className = 'city-slide' + (i === 0 ? ' active' : '');
-    const bg = document.createElement('div');
-    bg.className = 'city-slide-bg';
-    bg.style.background = `linear-gradient(135deg,${p.color})`;
-    // show real image if file exists (browser handles 404 gracefully via onerror)
+    slide.style.background = 'linear-gradient(135deg,rgba(201,184,184,0.3),rgba(191,200,208,0.3))';
+
     const img = new Image();
-    img.onload = () => { slide.style.backgroundImage = `url('${p.src}')`; slide.style.backgroundSize = 'cover'; slide.style.backgroundPosition = 'center'; };
+    img.onload = () => {
+      slide.style.backgroundImage = `url('${p.src}')`;
+      slide.style.backgroundSize = 'cover';
+      slide.style.backgroundPosition = 'center';
+    };
     img.src = p.src;
+
     const info = document.createElement('div');
     info.className = 'city-slide-info';
-    info.innerHTML = `<span class="city-slide-label">${p.label}</span><span class="city-slide-date">${p.date}</span>`;
-    slide.append(bg, info);
+    info.innerHTML = (p.location ? `<span class="city-slide-label">${p.location}</span>` : '')
+                   + `<span class="city-slide-date">${p.date}</span>`;
+    slide.appendChild(info);
     track.appendChild(slide);
 
     const dot = document.createElement('button');
     dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => { goToSlide(i, slides, dotEls); resetTimer(); });
     dotsEl.appendChild(dot);
   });
 
   const slides = track.querySelectorAll('.city-slide');
   const dotEls = dotsEl.querySelectorAll('.carousel-dot');
+  dotEls.forEach((dot, i) => dot.addEventListener('click', () => { goToSlide(i, slides, dotEls); resetTimer(); }));
 
   function resetTimer() {
     clearInterval(carouselTimer);
     carouselTimer = setInterval(() => goToSlide(currentSlide + 1, slides, dotEls), 3000);
   }
 
-  carousel.addEventListener('mouseenter', () => clearInterval(carouselTimer));
-  carousel.addEventListener('mouseleave', () => resetTimer());
-
+  _enterH = () => clearInterval(carouselTimer);
+  _leaveH = () => resetTimer();
+  carousel.addEventListener('mouseenter', _enterH);
+  carousel.addEventListener('mouseleave', _leaveH);
   carousel.style.display = 'flex';
   resetTimer();
 }
 
 // Map interaction
 const dots = document.querySelectorAll('.map-city-dot');
-const panelHeader = document.getElementById('panel-header');
-const panelHint = document.getElementById('panel-hint');
+const panelHeader   = document.getElementById('panel-header');
+const panelHint     = document.getElementById('panel-hint');
 const panelCityName = document.getElementById('panel-city-name');
 const panelCityMeta = document.getElementById('panel-city-meta');
 
@@ -723,7 +700,7 @@ dots.forEach(dot => {
     panelCityMeta.textContent = data.meta;
     panelHeader.style.display = 'block';
     panelHint.style.display = 'none';
-    startCarousel(data.photos);
+    startCarousel(allPhotos[city] || []);
   });
 });
 

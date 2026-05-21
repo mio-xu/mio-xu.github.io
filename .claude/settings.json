@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/jiayixu/Desktop/mio-xu.github.io && python3 generate-photos.py 2>/dev/null; if [ -n \"$(git status --porcelain)\" ]; then git add -A && git commit -m \"自动部署 $(date '+%Y-%m-%d %H:%M')\" && git push origin main; fi 2>/dev/null || true",
+            "statusMessage": "部署到 GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
