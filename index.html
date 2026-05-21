@@ -266,42 +266,52 @@
     font-size: 0.65rem; letter-spacing: 0.25em;
     text-transform: uppercase; color: var(--text-lt);
   }
-  .city-photos {
-    padding: 1.5rem;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;
-    flex: 1;
-  }
-  .city-photo {
-    aspect-ratio: 3/4;
-    border-radius: 3px;
-    border: 1px solid var(--glass-border);
+  .city-carousel {
+    flex: 1; position: relative; overflow: hidden;
     display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 0.5rem;
-    cursor: pointer; overflow: hidden; position: relative;
-    transition: transform 0.3s;
   }
-  .city-photo:hover { transform: scale(1.02); }
-  .city-photo-bg {
+  .city-carousel-track {
+    flex: 1; position: relative;
+  }
+  .city-slide {
     position: absolute; inset: 0;
-    transition: transform 0.5s;
+    opacity: 0; transition: opacity 0.7s ease;
+    background-size: cover; background-position: center;
   }
-  .city-photo:hover .city-photo-bg { transform: scale(1.06); }
-  .city-photo-date {
-    position: absolute; bottom: 0.6rem; left: 0.6rem;
+  .city-slide.active { opacity: 1; }
+  .city-slide-bg {
+    position: absolute; inset: 0;
+  }
+  .city-slide-info {
+    position: absolute; bottom: 1rem; left: 1rem;
+    display: flex; align-items: center; gap: 0.5rem; z-index: 2;
+  }
+  .city-slide-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem; letter-spacing: 0.15em;
+    color: var(--text-lt); text-transform: uppercase;
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(8px);
+    padding: 0.2rem 0.6rem; border-radius: 100px;
+  }
+  .city-slide-date {
     font-size: 0.58rem; letter-spacing: 0.15em;
-    background: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.65);
     backdrop-filter: blur(8px);
     padding: 0.2rem 0.5rem; border-radius: 100px;
     color: var(--text);
   }
-  .city-photo-ph {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.7rem; letter-spacing: 0.15em;
-    color: var(--text-lt); text-transform: uppercase;
-    position: relative; z-index: 1;
+  .city-carousel-dots {
+    display: flex; justify-content: center; gap: 0.4rem;
+    padding: 0.75rem 0; background: transparent;
   }
-  .city-photo:first-child {
-    grid-column: 1 / -1; aspect-ratio: 16/9;
+  .carousel-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--glass-border); border: none; cursor: pointer;
+    padding: 0; transition: background 0.3s, transform 0.3s;
+  }
+  .carousel-dot.active {
+    background: var(--rose); transform: scale(1.4);
   }
 
   /* CONTACT */
@@ -553,7 +563,10 @@
           <p>查看那里拍摄的照片 ✦</p>
         </div>
       </div>
-      <div class="city-photos" id="panel-photos" style="display:none"></div>
+      <div class="city-carousel" id="panel-carousel" style="display:none">
+        <div class="city-carousel-track" id="carousel-track"></div>
+        <div class="city-carousel-dots" id="carousel-dots"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -585,66 +598,118 @@
 // City data
 const cityData = {
   tokyo: {
-    name: 'Tokyo',
-    meta: '东京 · 日本',
+    name: 'Tokyo', meta: '东京 · 日本',
     photos: [
-      { label: 'Cover Shot', date: '2024.03', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
-      { label: 'Street', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
-      { label: 'Café', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
+      { src: 'images/cities/tokyo/1.jpg', label: 'Cover Shot', date: '2024.03', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
+      { src: 'images/cities/tokyo/2.jpg', label: 'Street', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+      { src: 'images/cities/tokyo/3.jpg', label: 'Café', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
     ]
   },
   paris: {
-    name: 'Paris',
-    meta: '巴黎 · 法国',
+    name: 'Paris', meta: '巴黎 · 法国',
     photos: [
-      { label: 'Eiffel', date: '2023.09', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
-      { label: 'Marais', date: '2023.09', color: 'rgba(201,184,184,0.45), rgba(191,200,208,0.35)' },
-      { label: 'Seine', date: '2023.09', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
+      { src: 'images/cities/paris/1.jpg', label: 'Eiffel', date: '2023.09', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
+      { src: 'images/cities/paris/2.jpg', label: 'Marais', date: '2023.09', color: 'rgba(201,184,184,0.45), rgba(191,200,208,0.35)' },
+      { src: 'images/cities/paris/3.jpg', label: 'Seine', date: '2023.09', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
     ]
   },
   busan: {
-    name: 'Busan',
-    meta: '釜山 · 韩国',
+    name: 'Busan', meta: '釜山 · 韩国',
     photos: [
-      { label: 'Beach', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
-      { label: 'Gamcheon', date: '2023.07', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
-      { label: 'Market', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+      { src: 'images/cities/busan/1.jpg', label: 'Beach', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
+      { src: 'images/cities/busan/2.jpg', label: 'Gamcheon', date: '2023.07', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
+      { src: 'images/cities/busan/3.jpg', label: 'Market', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
     ]
   },
   daegu: {
-    name: 'Daegu',
-    meta: '大邱 · 韩国',
+    name: 'Daegu', meta: '大邱 · 韩国',
     photos: [
-      { label: 'Alley', date: '2023.07', color: 'rgba(212,204,196,0.45), rgba(201,184,184,0.35)' },
-      { label: 'Cafe Street', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
-      { label: 'Park', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
+      { src: 'images/cities/daegu/1.jpg', label: 'Alley', date: '2023.07', color: 'rgba(212,204,196,0.45), rgba(201,184,184,0.35)' },
+      { src: 'images/cities/daegu/2.jpg', label: 'Cafe Street', date: '2023.07', color: 'rgba(191,200,208,0.45), rgba(184,196,188,0.35)' },
+      { src: 'images/cities/daegu/3.jpg', label: 'Park', date: '2023.07', color: 'rgba(184,196,188,0.45), rgba(212,204,196,0.35)' },
     ]
   },
   wuhan: {
-    name: 'Wuhan',
-    meta: '武汉 · 中国',
+    name: 'Wuhan', meta: '武汉 · 中国',
     photos: [
-      { label: 'Cherry Blossoms', date: '2024.03', color: 'rgba(201,184,184,0.5), rgba(212,204,196,0.4)' },
-      { label: 'Yellow Crane', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
-      { label: 'Hankou', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
+      { src: 'images/cities/wuhan/1.jpg', label: 'Cherry Blossoms', date: '2024.03', color: 'rgba(201,184,184,0.5), rgba(212,204,196,0.4)' },
+      { src: 'images/cities/wuhan/2.jpg', label: 'Yellow Crane', date: '2024.03', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+      { src: 'images/cities/wuhan/3.jpg', label: 'Hankou', date: '2024.03', color: 'rgba(191,200,208,0.45), rgba(201,184,184,0.35)' },
     ]
   },
   guangzhou: {
-    name: 'Guangzhou',
-    meta: '广州 · 中国',
+    name: 'Guangzhou', meta: '广州 · 中国',
     photos: [
-      { label: 'Canton Tower', date: '2023.12', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
-      { label: 'Shamian', date: '2023.12', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
-      { label: 'Night Market', date: '2023.12', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
+      { src: 'images/cities/guangzhou/1.jpg', label: 'Canton Tower', date: '2023.12', color: 'rgba(212,204,196,0.45), rgba(184,196,188,0.35)' },
+      { src: 'images/cities/guangzhou/2.jpg', label: 'Shamian', date: '2023.12', color: 'rgba(201,184,184,0.45), rgba(212,204,196,0.35)' },
+      { src: 'images/cities/guangzhou/3.jpg', label: 'Night Market', date: '2023.12', color: 'rgba(184,196,188,0.45), rgba(191,200,208,0.35)' },
     ]
   }
 };
+
+// Carousel state
+let carouselTimer = null;
+let currentSlide = 0;
+
+function goToSlide(index, slides, dotEls) {
+  slides[currentSlide].classList.remove('active');
+  dotEls[currentSlide].classList.remove('active');
+  currentSlide = (index + slides.length) % slides.length;
+  slides[currentSlide].classList.add('active');
+  dotEls[currentSlide].classList.add('active');
+}
+
+function startCarousel(photos) {
+  const track = document.getElementById('carousel-track');
+  const dotsEl = document.getElementById('carousel-dots');
+  const carousel = document.getElementById('panel-carousel');
+
+  clearInterval(carouselTimer);
+  currentSlide = 0;
+  track.innerHTML = '';
+  dotsEl.innerHTML = '';
+
+  photos.forEach((p, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'city-slide' + (i === 0 ? ' active' : '');
+    const bg = document.createElement('div');
+    bg.className = 'city-slide-bg';
+    bg.style.background = `linear-gradient(135deg,${p.color})`;
+    // show real image if file exists (browser handles 404 gracefully via onerror)
+    const img = new Image();
+    img.onload = () => { slide.style.backgroundImage = `url('${p.src}')`; slide.style.backgroundSize = 'cover'; slide.style.backgroundPosition = 'center'; };
+    img.src = p.src;
+    const info = document.createElement('div');
+    info.className = 'city-slide-info';
+    info.innerHTML = `<span class="city-slide-label">${p.label}</span><span class="city-slide-date">${p.date}</span>`;
+    slide.append(bg, info);
+    track.appendChild(slide);
+
+    const dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => { goToSlide(i, slides, dotEls); resetTimer(); });
+    dotsEl.appendChild(dot);
+  });
+
+  const slides = track.querySelectorAll('.city-slide');
+  const dotEls = dotsEl.querySelectorAll('.carousel-dot');
+
+  function resetTimer() {
+    clearInterval(carouselTimer);
+    carouselTimer = setInterval(() => goToSlide(currentSlide + 1, slides, dotEls), 3000);
+  }
+
+  carousel.addEventListener('mouseenter', () => clearInterval(carouselTimer));
+  carousel.addEventListener('mouseleave', () => resetTimer());
+
+  carousel.style.display = 'flex';
+  resetTimer();
+}
 
 // Map interaction
 const dots = document.querySelectorAll('.map-city-dot');
 const panelHeader = document.getElementById('panel-header');
 const panelHint = document.getElementById('panel-hint');
-const panelPhotos = document.getElementById('panel-photos');
 const panelCityName = document.getElementById('panel-city-name');
 const panelCityMeta = document.getElementById('panel-city-meta');
 
@@ -652,26 +717,13 @@ dots.forEach(dot => {
   dot.addEventListener('click', () => {
     const city = dot.dataset.city;
     const data = cityData[city];
-
-    // Update active dot
     dots.forEach(d => d.classList.remove('active'));
     dot.classList.add('active');
-
-    // Update panel header
     panelCityName.textContent = data.name;
     panelCityMeta.textContent = data.meta;
     panelHeader.style.display = 'block';
     panelHint.style.display = 'none';
-
-    // Build photos
-    panelPhotos.style.display = 'grid';
-    panelPhotos.innerHTML = data.photos.map((p, i) => `
-      <div class="city-photo" style="${i===0?'grid-column:1/-1;aspect-ratio:16/9;':''}">
-        <div class="city-photo-bg" style="background:linear-gradient(135deg,${p.color});"></div>
-        <span class="city-photo-ph">${p.label}</span>
-        <span class="city-photo-date">${p.date}</span>
-      </div>
-    `).join('');
+    startCarousel(data.photos);
   });
 });
 
