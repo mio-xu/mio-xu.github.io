@@ -53,12 +53,12 @@
   }
   .nav-links a:hover { color: var(--text); }
 
-  /* HERO */
+  /* HERO + ABOUT (merged) */
   #hero {
     min-height: 100vh;
-    display: flex; flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 4rem 8rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; gap: 5rem;
+    padding: 8rem 4rem 6rem;
     position: relative; overflow: hidden;
   }
   .hero-bg {
@@ -69,25 +69,20 @@
       radial-gradient(ellipse 40% 40% at 50% 50%, rgba(212,204,196,0.18) 0%, transparent 60%),
       var(--warm);
   }
-  .hero-content { position: relative; z-index: 2; max-width: 680px; }
+  .hero-content { position: relative; z-index: 2; }
   .hero-eyebrow {
     font-size: 0.67rem; letter-spacing: 0.38em; text-transform: uppercase;
     color: var(--text-lt); margin-bottom: 1rem;
-    opacity: 0; animation: fadeUp 1s 0.4s forwards;
+    opacity: 0; animation: fadeUp 1s 0.3s forwards;
   }
   .hero-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3.8rem, 8vw, 7rem);
+    font-size: clamp(3.2rem, 6vw, 5.5rem);
     font-weight: 300; line-height: 0.95; letter-spacing: -0.01em;
-    color: var(--text);
-    opacity: 0; animation: fadeUp 1s 0.6s forwards;
+    color: var(--text); margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 1s 0.5s forwards;
   }
   .hero-title em { font-style: italic; color: var(--rose); }
-  .hero-sub {
-    margin-top: 2rem; font-size: 0.9rem;
-    line-height: 2; color: var(--text-lt); max-width: 40ch;
-    opacity: 0; animation: fadeUp 1s 0.8s forwards;
-  }
   .hero-scroll {
     position: absolute; bottom: 3rem; right: 4rem;
     display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
@@ -99,20 +94,6 @@
     animation: scrollPulse 2s 2s infinite;
   }
   .scroll-label { font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-lt); }
-
-  /* ABOUT */
-  #about {
-    padding: 9rem 4rem;
-    background:
-      radial-gradient(ellipse 55% 70% at 8% 50%, rgba(184,196,188,0.22) 0%, transparent 55%),
-      radial-gradient(ellipse 40% 50% at 92% 20%, rgba(201,184,184,0.18) 0%, transparent 50%),
-      var(--warm);
-  }
-  .about-inner {
-    max-width: 1000px; margin: 0 auto;
-    display: grid; grid-template-columns: 1.1fr 1fr; gap: 6rem; align-items: center;
-  }
-  .about-text-wrap { display: block; }
   .section-label {
     font-size: 0.63rem; letter-spacing: 0.4em; text-transform: uppercase;
     color: var(--text-lt); margin-bottom: 0.9rem;
@@ -124,6 +105,7 @@
   }
   .about-body {
     font-size: 0.95rem; line-height: 2.1; color: var(--text);
+    opacity: 0; animation: fadeUp 1s 0.7s forwards;
   }
   .about-body em {
     font-family: 'Cormorant Garamond', serif;
@@ -145,7 +127,10 @@
     text-transform: uppercase; color: var(--text-lt);
   }
   .stat-div { width: 1px; background: var(--glass-border); align-self: stretch; }
-  .about-imgs { position: relative; height: 520px; }
+  .about-imgs {
+    position: relative; height: 520px;
+    opacity: 0; animation: fadeIn 1.2s 0.6s forwards;
+  }
   .about-img {
     position: absolute;
     border: 1px solid var(--glass-border);
@@ -401,10 +386,10 @@
 
   @media (max-width: 900px) {
     nav { padding: 1.3rem 1.5rem; }
-    #hero, #about, #map-section, #albums, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+    #hero, #map-section, #albums, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+    #hero { grid-template-columns: 1fr; padding-top: 7rem; gap: 3rem; }
     #world-map { height: 320px; }
-    .about-inner { grid-template-columns: 1fr; gap: 3rem; }
-    .about-imgs { height: 340px; }
+    .about-imgs { height: 320px; }
     .albums-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     .photos-grid { grid-template-columns: repeat(3, 1fr); }
     footer { flex-direction: column; gap: 0.8rem; text-align: center; }
@@ -421,62 +406,48 @@
 <nav>
   <a href="#hero" class="nav-logo">MIO</a>
   <ul class="nav-links">
-    <li><a href="#about">About</a></li>
+    <li><a href="#hero">About</a></li>
     <li><a href="#map-section">Map</a></li>
     <li><a href="#albums">Albums</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
+<!-- HERO + ABOUT -->
 <section id="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
     <p class="hero-eyebrow">生活 · 穿搭 · 记录</p>
     <h1 class="hero-title">Hello,<br>I'm <em>Mio</em></h1>
-    <p class="hero-sub">
-      用镜头记录每一个值得被记住的瞬间——<br>
-      街角的光，旅途的风，还有每天穿搭的小心情。
-    </p>
+    <div class="about-body">
+      <p>我是 <em>Mio</em>，一个喜欢用照片记录生活的普通女生。</p>
+      <p>热爱时尚穿搭，但更享受把日常穿出自己的感觉。相机是我随身携带的日记本，记录路边盛开的野花、城市里有趣的光影，还有偶遇的流浪猫。</p>
+      <p>这里是我的小小世界，欢迎你来逛逛。</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-cities">—</div>
+        <div class="stat-lbl">Cities</div>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <div class="stat-num" id="stat-photos">—</div>
+        <div class="stat-lbl">Photos</div>
+      </div>
+      <div class="stat-div"></div>
+      <div class="stat">
+        <div class="stat-num">1</div>
+        <div class="stat-lbl">Me</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-imgs">
+    <div class="about-img about-img-1" style="background-image:url('images/photo1.jpeg'); background-size:cover; background-position:center;"></div>
+    <div class="about-img about-img-2" style="background-image:url('images/photo2.jpeg'); background-size:cover; background-position:center;"></div>
   </div>
   <div class="hero-scroll">
     <div class="scroll-line"></div>
     <span class="scroll-label">Scroll</span>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="about-inner">
-    <div class="about-text-wrap reveal">
-      <p class="section-label">About Me</p>
-      <h2 class="section-title">关于<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">我</em></h2>
-      <div class="about-body">
-        <p>我是 <em>Mio</em>，一个喜欢用照片记录生活的普通女生。</p>
-        <p>热爱时尚穿搭，但更享受把日常穿出自己的感觉。相机是我随身携带的日记本，记录路边盛开的野花、城市里有趣的光影，还有偶遇的流浪猫。</p>
-        <p>这里是我的小小世界，欢迎你来逛逛。</p>
-      </div>
-      <div class="about-stats">
-        <div class="stat">
-          <div class="stat-num" id="stat-cities">—</div>
-          <div class="stat-lbl">Cities</div>
-        </div>
-        <div class="stat-div"></div>
-        <div class="stat">
-          <div class="stat-num" id="stat-photos">—</div>
-          <div class="stat-lbl">Photos</div>
-        </div>
-        <div class="stat-div"></div>
-        <div class="stat">
-          <div class="stat-num">1</div>
-          <div class="stat-lbl">Me</div>
-        </div>
-      </div>
-    </div>
-    <div class="about-imgs reveal">
-      <div class="about-img about-img-1" style="background-image:url('images/photo1.jpeg'); background-size:cover; background-position:center;"></div>
-      <div class="about-img about-img-2" style="background-image:url('images/photo2.jpeg'); background-size:cover; background-position:center;"></div>
-    </div>
   </div>
 </section>
 
