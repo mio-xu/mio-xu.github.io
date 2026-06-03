@@ -3,6 +3,7 @@
   "daegu": [],
   "guangzhou": [],
   "paris": [],
+  "sanya": [],
   "tokyo": [
     {
       "src": "images/cities/tokyo/disney/2026-05-29/1.jpeg",
@@ -71,6 +72,7 @@
     }
   ],
   "wuhan": [],
+  "xiamen": [],
   "yokohama": [
     {
       "src": "images/cities/yokohama/2026-05-17/1.jpeg",
