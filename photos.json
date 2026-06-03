@@ -3,7 +3,118 @@
   "daegu": [],
   "guangzhou": [],
   "paris": [],
-  "sanya": [],
+  "sanya": [
+    {
+      "src": "images/cities/sanya/2026-05-24/1.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/2.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/3.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/4.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/5.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/6.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/7.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/8.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/9.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/10.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/11.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/12.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/13.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/14.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/15.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/16.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/17.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/18.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/19.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/20.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/21.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    },
+    {
+      "src": "images/cities/sanya/2026-05-24/22.jpeg",
+      "location": "",
+      "date": "2026.05.24"
+    }
+  ],
   "tokyo": [
     {
       "src": "images/cities/tokyo/disney/2026-05-29/1.jpeg",
@@ -72,7 +183,253 @@
     }
   ],
   "wuhan": [],
-  "xiamen": [],
+  "xiamen": [
+    {
+      "src": "images/cities/xiamen/2026-05-23/1.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/2.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/3.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/4.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/5.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/6.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/7.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/8.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/9.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/10.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/11.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/12.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/13.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/14.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/15.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/16.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/17.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/18.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/19.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/20.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/21.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/22.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/23.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/24.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/25.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/26.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/27.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/28.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/29.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/30.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/31.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/32.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/33.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/34.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/35.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/36.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/37.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/38.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/39.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/40.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/41.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/42.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/43.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/44.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/45.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/46.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/47.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/48.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    },
+    {
+      "src": "images/cities/xiamen/2026-05-23/49.jpeg",
+      "location": "",
+      "date": "2026.05.23"
+    }
+  ],
   "yokohama": [
     {
       "src": "images/cities/yokohama/2026-05-17/1.jpeg",
