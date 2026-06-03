@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mio — 生活日记</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --rose:   #c9b8b8;
@@ -168,150 +166,82 @@
     text-transform: uppercase; color: var(--text-lt); opacity: 0.7;
   }
 
-  /* MAP SECTION */
-  #map-section {
+  /* ALBUMS */
+  #albums {
     padding: 9rem 4rem;
     background:
       radial-gradient(ellipse 60% 60% at 50% 100%, rgba(191,200,208,0.25) 0%, transparent 55%),
       radial-gradient(ellipse 40% 40% at 85% 10%, rgba(212,204,196,0.2) 0%, transparent 50%),
       var(--cream);
   }
-  .map-header {
-    max-width: 1100px; margin: 0 auto 3.5rem;
-    display: flex; justify-content: space-between; align-items: flex-end;
+  .albums-inner { max-width: 1100px; margin: 0 auto; }
+  .albums-header { margin-bottom: 3.5rem; }
+  .albums-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
   }
-  .map-counter {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.85rem; font-weight: 300;
-    color: var(--text-lt); letter-spacing: 0.08em;
-  }
-  .map-counter span {
-    font-size: 1.6rem; color: var(--text); margin-right: 0.3rem;
-  }
-
-  .map-layout {
-    max-width: 1100px; margin: 0 auto;
-    display: flex; flex-direction: column; gap: 1.5rem;
-  }
-
-  .map-wrap {
-    position: relative;
+  .album-card {
+    cursor: pointer; border-radius: 6px; overflow: hidden;
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    box-shadow: 0 8px 32px var(--glass-shadow);
-    overflow: hidden;
+    background: var(--glass-bg); backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
   }
-
-  #world-map { width: 100%; height: 520px; }
-
-  /* Leaflet overrides */
-  .leaflet-container { background: #eae6e1; font-family: 'Jost', sans-serif; }
-  .leaflet-control-zoom a {
-    background: rgba(255,255,255,0.80) !important;
-    backdrop-filter: blur(8px);
-    border-color: var(--glass-border) !important;
-    color: var(--text) !important;
+  .album-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px var(--glass-shadow); }
+  .album-cover {
+    position: relative; aspect-ratio: 4/3; overflow: hidden;
+    background: linear-gradient(135deg, rgba(201,184,184,0.3), rgba(191,200,208,0.3));
   }
-  .leaflet-control-zoom a:hover { background: rgba(255,255,255,0.95) !important; }
-  .leaflet-control-attribution {
-    background: rgba(255,255,255,0.5) !important;
-    font-size: 9px; color: var(--text-lt);
+  .album-cover img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; transition: transform 0.5s;
   }
-  .leaflet-control-attribution a { color: var(--text-lt); }
-  .map-dot-tooltip {
-    background: rgba(255,255,255,0.80);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.5) !important;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    font-family: 'Jost', sans-serif;
-    font-size: 9px; font-weight: 300;
-    letter-spacing: 0.12em; color: var(--text);
-    padding: 3px 8px;
-  }
-  .map-dot-tooltip::before { display: none; }
-
-  /* CITY PANEL */
-  .city-panel {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    box-shadow: 0 8px 32px var(--glass-shadow);
-    overflow: hidden;
-    height: 300px;
-    display: flex; flex-direction: row;
-  }
-  .city-panel-header {
-    padding: 1.8rem 2rem 1.4rem;
-    flex: 0 0 220px;
-    flex-direction: column; justify-content: center;
-    border-right: 1px solid var(--glass-border);
-  }
-  .city-panel-hint {
-    font-size: 0.75rem; letter-spacing: 0.12em;
-    color: var(--text-lt); line-height: 1.8;
-    padding: 2rem;
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    text-align: center;
-  }
-  .city-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem; font-weight: 300; color: var(--text);
-    letter-spacing: 0.05em; margin-bottom: 0.3rem;
-  }
-  .city-meta {
-    font-size: 0.65rem; letter-spacing: 0.25em;
-    text-transform: uppercase; color: var(--text-lt);
-  }
-  .city-carousel {
-    flex: 1; position: relative; overflow: hidden;
-    display: flex; flex-direction: column;
-  }
-  .city-carousel-track {
-    flex: 1; position: relative;
-  }
-  .city-slide {
+  .album-card:hover .album-cover img { transform: scale(1.04); }
+  .album-cover-overlay {
     position: absolute; inset: 0;
-    opacity: 0; transition: opacity 0.7s ease;
-    background-size: cover; background-position: center;
+    background: linear-gradient(to bottom, transparent 55%, rgba(80,70,68,0.3) 100%);
   }
-  .city-slide.active { opacity: 1; }
-  .city-slide-bg {
-    position: absolute; inset: 0;
+  .album-count {
+    position: absolute; bottom: 0.75rem; right: 0.75rem;
+    font-size: 0.57rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: white; background: rgba(0,0,0,0.22); backdrop-filter: blur(8px);
+    padding: 0.18rem 0.55rem; border-radius: 100px;
   }
-  .city-slide-info {
-    position: absolute; bottom: 1rem; left: 1rem;
-    display: flex; align-items: center; gap: 0.5rem; z-index: 2;
-  }
-  .city-slide-label {
+  .album-info { padding: 1rem 1.2rem 1.2rem; }
+  .album-city-name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 0.72rem; letter-spacing: 0.15em;
-    color: var(--text-lt); text-transform: uppercase;
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(8px);
-    padding: 0.2rem 0.6rem; border-radius: 100px;
+    font-size: 1.5rem; font-weight: 300; color: var(--text); margin-bottom: 0.2rem;
   }
-  .city-slide-date {
-    font-size: 0.58rem; letter-spacing: 0.15em;
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(8px);
-    padding: 0.2rem 0.5rem; border-radius: 100px;
-    color: var(--text);
+  .album-city-meta {
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-lt);
   }
-  .carousel-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    z-index: 3; background: rgba(255,255,255,0.72);
-    backdrop-filter: blur(8px); border: none; border-radius: 50%;
-    width: 32px; height: 32px; cursor: pointer;
-    font-size: 20px; line-height: 1; color: var(--text);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.2s, background 0.2s;
+  .city-detail { display: none; }
+  .detail-back {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--text-lt); padding: 0; margin-bottom: 2.5rem;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    transition: color 0.2s;
   }
-  .city-carousel:hover .carousel-arrow { opacity: 1; }
-  .carousel-arrow:hover { background: rgba(255,255,255,0.95); }
-  .carousel-arrow.prev { left: 0.75rem; }
-  .carousel-arrow.next { right: 0.75rem; }
+  .detail-back:hover { color: var(--text); }
+  .detail-header { margin-bottom: 2.5rem; }
+  .detail-city-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3rem); font-weight: 300; color: var(--text); margin-bottom: 0.3rem;
+  }
+  .detail-city-meta {
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-lt);
+  }
+  .photos-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
+  }
+  .photo-thumb {
+    aspect-ratio: 1; overflow: hidden; cursor: zoom-in; border-radius: 2px;
+  }
+  .photo-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; transition: transform 0.4s;
+  }
+  .photo-thumb:hover img { transform: scale(1.06); }
 
   #photo-lightbox {
     position: fixed; inset: 0; z-index: 9999;
@@ -435,13 +365,16 @@
 
   @media (max-width: 900px) {
     nav { padding: 1.3rem 1.5rem; }
-    #hero, #about, #map-section, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+    #hero, #about, #albums, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
     .about-inner { grid-template-columns: 1fr; gap: 3rem; }
     .about-imgs { height: 340px; }
-    .map-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .city-panel { height: auto; min-height: 260px; flex-direction: column; }
-    .city-panel-header { flex: unset; border-right: none; border-bottom: 1px solid var(--glass-border); }
+    .albums-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .photos-grid { grid-template-columns: repeat(3, 1fr); }
     footer { flex-direction: column; gap: 0.8rem; text-align: center; }
+  }
+  @media (max-width: 500px) {
+    .albums-grid { grid-template-columns: 1fr; }
+    .photos-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
@@ -452,7 +385,7 @@
   <a href="#hero" class="nav-logo">MIO</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#map-section">Places</a></li>
+    <li><a href="#albums">Albums</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
@@ -509,36 +442,21 @@
   </div>
 </section>
 
-<!-- MAP SECTION -->
-<section id="map-section">
-  <div class="map-header reveal">
-    <div>
-      <p class="section-label">Places I've Been</p>
-      <h2 class="section-title">去过的<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">地方</em></h2>
+<!-- ALBUMS -->
+<section id="albums">
+  <div class="albums-inner">
+    <div class="albums-header reveal">
+      <p class="section-label">Photo Albums</p>
+      <h2 class="section-title">相<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">册</em></h2>
     </div>
-    <div class="map-counter"><span>6</span> cities on the map</div>
-  </div>
-
-  <div class="map-layout reveal">
-    <div class="map-wrap">
-      <div id="world-map"></div>
-    </div>
-
-    <!-- CITY PANEL -->
-    <div class="city-panel" id="city-panel">
-      <div class="city-panel-header" id="panel-header" style="display:none">
-        <div class="city-name" id="panel-city-name"></div>
-        <div class="city-meta" id="panel-city-meta"></div>
+    <div class="albums-grid" id="albums-grid"></div>
+    <div class="city-detail" id="city-detail">
+      <button class="detail-back" id="detail-back">← 返回相册</button>
+      <div class="detail-header">
+        <div class="detail-city-name" id="detail-city-name"></div>
+        <div class="detail-city-meta" id="detail-city-meta"></div>
       </div>
-      <div class="city-panel-hint" id="panel-hint">
-        <div>
-          <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:var(--text);margin-bottom:0.6rem;">点击地图上的城市</p>
-          <p>查看那里拍摄的照片 ✦</p>
-        </div>
-      </div>
-      <div class="city-carousel" id="panel-carousel" style="display:none">
-        <div class="city-carousel-track" id="carousel-track"></div>
-      </div>
+      <div class="photos-grid" id="photos-grid"></div>
     </div>
   </div>
 </section>
@@ -576,179 +494,99 @@
 </div>
 
 <script>
-// City metadata — lat/lon used to compute SVG dot position automatically
-// Formula calibrated to the hand-drawn SVG continents (viewBox 0 0 1000 500):
-//   x = lon * 2.731 + 448.58
-//   y = -lat * 1.974 + 168.42
-// lx/ly: label offset from dot (default: right 8, up 8)
 const cityData = {
-  tokyo:     { name: 'Tokyo',     meta: '东京 · 日本', lat: 35.68, lon: 139.69, dy: -8 },
-  paris:     { name: 'Paris',     meta: '巴黎 · 法国', lat: 48.85, lon:   2.35 },
-  busan:     { name: 'Busan',     meta: '釜山 · 韩国', lat: 35.10, lon: 129.05 },
-  daegu:     { name: 'Daegu',     meta: '大邱 · 韩国', lat: 35.87, lon: 128.60, lx: -40 },
-  wuhan:     { name: 'Wuhan',     meta: '武汉 · 中国', lat: 30.59, lon: 114.30 },
-  guangzhou: { name: 'Guangzhou', meta: '广州 · 中国', lat: 23.13, lon: 113.28 },
-  yokohama:  { name: 'Yokohama',  meta: '横滨 · 日本', lat: 35.44, lon: 139.64, lx: -52, dy: 8 },
-  xiamen:    { name: 'Xiamen',    meta: '厦门 · 中国', lat: 24.48, lon: 118.09 },
-  sanya:     { name: 'Sanya',     meta: '三亚 · 中国', lat: 18.25, lon: 109.51 },
+  tokyo:     { name: 'Tokyo',     meta: '东京 · 日本' },
+  paris:     { name: 'Paris',     meta: '巴黎 · 法国' },
+  busan:     { name: 'Busan',     meta: '釜山 · 韩国' },
+  daegu:     { name: 'Daegu',     meta: '大邱 · 韩国' },
+  wuhan:     { name: 'Wuhan',     meta: '武汉 · 中国' },
+  guangzhou: { name: 'Guangzhou', meta: '广州 · 中国' },
+  yokohama:  { name: 'Yokohama',  meta: '横滨 · 日本' },
+  xiamen:    { name: 'Xiamen',    meta: '厦门 · 中国' },
+  sanya:     { name: 'Sanya',     meta: '三亚 · 中国' },
 };
 
 let allPhotos = {};
-let leafletMap = null;
-let leafletMarkers = {};
+let currentPhotoData = [];
+let currentSlide = 0;
 
-function renderMapDots() {
-  if (!leafletMap) {
-    leafletMap = L.map('world-map', { center: [28, 100], zoom: 3, minZoom: 2, maxZoom: 10 });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd', maxZoom: 19
-    }).addTo(leafletMap);
-  }
-
-  Object.values(leafletMarkers).forEach(m => m.remove());
-  leafletMarkers = {};
-
+function renderAlbums() {
+  const grid = document.getElementById('albums-grid');
+  grid.innerHTML = '';
   const active = Object.entries(cityData)
     .filter(([key]) => allPhotos[key] && allPhotos[key].length > 0);
-
-  document.querySelector('.map-counter span').textContent = active.length || 0;
-
+  updateStats(allPhotos);
   active.forEach(([key, city]) => {
-    const marker = L.circleMarker([city.lat, city.lon], {
-      radius: 7, fillColor: '#c9b8b8', color: 'white', weight: 2, opacity: 1, fillOpacity: 1
-    }).addTo(leafletMap);
-    marker.bindTooltip(city.name, { permanent: false, direction: 'top', className: 'map-dot-tooltip' });
-    marker.on('click', () => {
-      Object.values(leafletMarkers).forEach(m => m.setStyle({ fillColor: '#c9b8b8', radius: 7 }));
-      marker.setStyle({ fillColor: '#5a5250', radius: 9 });
-      panelCityName.textContent = city.name;
-      panelCityMeta.textContent = city.meta;
-      panelHeader.style.display = 'flex';
-      panelHint.style.display = 'none';
-      startCarousel(allPhotos[key] || []);
-    });
-    leafletMarkers[key] = marker;
+    const photos = allPhotos[key];
+    const card = document.createElement('div');
+    card.className = 'album-card reveal';
+    card.innerHTML = `
+      <div class="album-cover">
+        <img src="${photos[0].src}" alt="${city.name}" loading="lazy">
+        <div class="album-cover-overlay"></div>
+        <span class="album-count">${photos.length} 张</span>
+      </div>
+      <div class="album-info">
+        <div class="album-city-name">${city.name}</div>
+        <div class="album-city-meta">${city.meta}</div>
+      </div>`;
+    card.addEventListener('click', () => openAlbum(key, city, photos));
+    grid.appendChild(card);
   });
+  observer.disconnect();
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
-fetch('photos.json').then(r => r.json()).then(d => {
-  allPhotos = d;
-  renderMapDots();
-  updateStats(d);
-}).catch(() => renderMapDots());
+function openAlbum(key, city, photos) {
+  document.getElementById('albums-grid').style.display = 'none';
+  const detail = document.getElementById('city-detail');
+  detail.style.display = 'block';
+  document.getElementById('detail-city-name').textContent = city.name;
+  document.getElementById('detail-city-meta').textContent = city.meta;
+  currentPhotoData = photos;
+  currentSlide = 0;
+  const pgrid = document.getElementById('photos-grid');
+  pgrid.innerHTML = '';
+  photos.forEach((p, i) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    thumb.innerHTML = `<img src="${p.src}" alt="" loading="lazy">`;
+    thumb.addEventListener('click', () => openLightbox(i));
+    pgrid.appendChild(thumb);
+  });
+  document.getElementById('albums').scrollIntoView({ behavior: 'smooth' });
+}
 
-// Carousel state
-let carouselTimer = null;
-let currentSlide = 0;
-let currentSlides = [];
-let _enterH = null, _leaveH = null;
+document.getElementById('detail-back').addEventListener('click', () => {
+  document.getElementById('city-detail').style.display = 'none';
+  document.getElementById('albums-grid').style.display = 'grid';
+  document.getElementById('photo-lightbox').classList.remove('visible');
+});
 
-function resetCarouselTimer() {
-  clearInterval(carouselTimer);
-  const lb = document.getElementById('photo-lightbox');
-  if (currentSlides.length > 1 && !lb.classList.contains('visible'))
-    carouselTimer = setInterval(() => goToSlide(currentSlide + 1), 3500);
+function openLightbox(index) {
+  currentSlide = index;
+  const p = currentPhotoData[currentSlide];
+  document.getElementById('lightbox-img').src = p.src;
+  document.getElementById('lightbox-meta').textContent =
+    [p.location, p.date].filter(Boolean).join('  ·  ');
+  document.getElementById('photo-lightbox').classList.add('visible');
 }
 
 function goToSlide(index) {
-  if (!currentSlides.length) return;
-  currentSlides[currentSlide].classList.remove('active');
-  currentSlide = (index + currentSlides.length) % currentSlides.length;
-  currentSlides[currentSlide].classList.add('active');
-  const lb = document.getElementById('photo-lightbox');
-  if (lb.classList.contains('visible')) {
-    const sl = currentSlides[currentSlide];
-    if (sl.dataset.src) {
-      document.getElementById('lightbox-img').src = sl.dataset.src;
-      document.getElementById('lightbox-meta').textContent =
-        [sl.dataset.location, sl.dataset.date].filter(Boolean).join('  ·  ');
-    }
-  }
+  if (!currentPhotoData.length) return;
+  currentSlide = (index + currentPhotoData.length) % currentPhotoData.length;
+  const p = currentPhotoData[currentSlide];
+  document.getElementById('lightbox-img').src = p.src;
+  document.getElementById('lightbox-meta').textContent =
+    [p.location, p.date].filter(Boolean).join('  ·  ');
 }
 
-function startCarousel(photos) {
-  const carousel = document.getElementById('panel-carousel');
-  const track    = document.getElementById('carousel-track');
-
-  clearInterval(carouselTimer);
-  currentSlide = 0;
-  track.innerHTML = '';
-  carousel.querySelectorAll('.carousel-arrow').forEach(a => a.remove());
-
-  if (_enterH) carousel.removeEventListener('mouseenter', _enterH);
-  if (_leaveH) carousel.removeEventListener('mouseleave', _leaveH);
-
-  document.getElementById('photo-lightbox').classList.remove('visible');
-
-  if (!photos || photos.length === 0) {
-    track.innerHTML = '<div class="city-slide active" style="display:flex;align-items:center;justify-content:center;"><span style="font-family:\'Cormorant Garamond\',serif;font-size:0.75rem;letter-spacing:0.2em;color:var(--text-lt);opacity:0.5;text-transform:uppercase;">No Photos Yet</span></div>';
-    carousel.style.display = 'flex';
-    return;
-  }
-
-  photos.forEach((p, i) => {
-    const slide = document.createElement('div');
-    slide.className = 'city-slide' + (i === 0 ? ' active' : '');
-    slide.dataset.src      = p.src;
-    slide.dataset.location = p.location || '';
-    slide.dataset.date     = p.date     || '';
-    slide.style.background = 'linear-gradient(135deg,rgba(201,184,184,0.3),rgba(191,200,208,0.3))';
-    const img = new Image();
-    img.onload = () => {
-      slide.style.backgroundImage = `url('${p.src}')`;
-      slide.style.backgroundSize = 'cover';
-      slide.style.backgroundPosition = 'center';
-    };
-    img.src = p.src;
-    const info = document.createElement('div');
-    info.className = 'city-slide-info';
-    info.innerHTML = (p.location ? `<span class="city-slide-label">${p.location}</span>` : '')
-                   + `<span class="city-slide-date">${p.date}</span>`;
-    slide.appendChild(info);
-    track.appendChild(slide);
-  });
-
-  currentSlides = Array.from(track.querySelectorAll('.city-slide'));
-
-  // Arrows
-  [['prev', '‹', -1], ['next', '›', 1]].forEach(([cls, icon, delta]) => {
-    const btn = document.createElement('button');
-    btn.className = `carousel-arrow ${cls}`;
-    btn.innerHTML = icon;
-    btn.addEventListener('click', () => { goToSlide(currentSlide + delta); resetCarouselTimer(); });
-    carousel.appendChild(btn);
-  });
-
-  // Hover: pause auto-play only
-  _enterH = () => clearInterval(carouselTimer);
-  _leaveH = () => resetCarouselTimer();
-  carousel.addEventListener('mouseenter', _enterH);
-  carousel.addEventListener('mouseleave', _leaveH);
-
-  // Click: open lightbox (pauses auto-play)
-  track.style.cursor = 'zoom-in';
-  track.addEventListener('click', () => {
-    const sl = currentSlides[currentSlide];
-    if (!sl || !sl.dataset.src) return;
-    document.getElementById('lightbox-img').src = sl.dataset.src;
-    document.getElementById('lightbox-meta').textContent =
-      [sl.dataset.location, sl.dataset.date].filter(Boolean).join('  ·  ');
-    document.getElementById('photo-lightbox').classList.add('visible');
-    clearInterval(carouselTimer);
-  });
-  carousel.style.display = 'flex';
-  resetCarouselTimer();
-}
-
-const panelHeader   = document.getElementById('panel-header');
-const panelHint     = document.getElementById('panel-hint');
-const panelCityName = document.getElementById('panel-city-name');
-const panelCityMeta = document.getElementById('panel-city-meta');
+fetch('photos.json').then(r => r.json()).then(d => {
+  allPhotos = d; renderAlbums();
+}).catch(() => renderAlbums());
 
 function closeLightbox() {
   document.getElementById('photo-lightbox').classList.remove('visible');
-  resetCarouselTimer();
 }
 
 document.getElementById('photo-lightbox').addEventListener('click', function(e) {
@@ -766,20 +604,16 @@ document.addEventListener('keydown', e => {
 });
 
 function updateStats(data) {
-  const cities = Object.values(data).filter(arr => arr.length > 0).length;
-  const photos = Object.values(data).flat().length;
   const sc = document.getElementById('stat-cities');
   const sp = document.getElementById('stat-photos');
-  if (sc) sc.textContent = cities;
-  if (sp) sp.textContent = photos;
+  if (sc) sc.textContent = Object.values(data).filter(a => a.length > 0).length;
+  if (sp) sp.textContent = Object.values(data).flat().length;
 }
 
-// Scroll reveal
-const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
-reveals.forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
