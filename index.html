@@ -433,84 +433,12 @@
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* HERO PHOTOS */
-  .hero-right {
-    position: absolute; top: 7rem; right: 4rem;
-    width: 36%; height: 82%;
-    pointer-events: none; z-index: 1;
-  }
-  .hero-polaroid {
-    position: absolute;
-    background: white; padding: 0.5rem 0.5rem 2.2rem;
-    box-shadow: 0 10px 36px rgba(0,0,0,0.10);
-    border-radius: 1px; overflow: hidden;
-  }
-  .hero-polaroid img { display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-  .hero-polaroid:nth-child(1) { width: 46%; right: 0; top: 2%; transform: rotate(2.2deg); z-index: 3; }
-  .hero-polaroid:nth-child(2) { width: 52%; left: 0; top: 25%; transform: rotate(-1.8deg); z-index: 2; }
-  .hero-polaroid:nth-child(3) { width: 44%; right: 7%; bottom: 5%; transform: rotate(1deg); z-index: 1; }
-
-  /* GALLERY STRIP */
-  #gallery {
-    padding: 7rem 0;
-    background:
-      radial-gradient(ellipse 50% 60% at 50% 0%, rgba(191,200,208,0.2) 0%, transparent 60%),
-      var(--cream);
-    overflow: hidden;
-  }
-  .gallery-header {
-    max-width: 1100px; margin: 0 auto 2.5rem; padding: 0 4rem;
-    display: flex; justify-content: space-between; align-items: flex-end;
-  }
-  .gallery-strip {
-    display: flex; gap: 0.75rem;
-    padding: 0.5rem 4rem 1.5rem;
-    overflow-x: auto; scroll-behavior: smooth;
-    scrollbar-width: none; -ms-overflow-style: none;
-  }
-  .gallery-strip::-webkit-scrollbar { display: none; }
-  .gallery-item {
-    flex: 0 0 auto; height: 260px;
-    border-radius: 4px; overflow: hidden;
-    position: relative; cursor: zoom-in;
-  }
-  .gallery-item img {
-    height: 100%; width: auto;
-    min-width: 160px; max-width: 300px;
-    object-fit: cover; display: block;
-    transition: transform 0.5s ease;
-  }
-  .gallery-item:hover img { transform: scale(1.05); }
-  .gallery-item-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(90,82,80,0.52) 0%, transparent 55%);
-    opacity: 0; transition: opacity 0.3s;
-    display: flex; align-items: flex-end; padding: 0.7rem 0.8rem;
-  }
-  .gallery-item:hover .gallery-item-overlay { opacity: 1; }
-  .gallery-item-meta {
-    font-size: 0.57rem; letter-spacing: 0.14em;
-    color: rgba(255,255,255,0.92); text-transform: uppercase; line-height: 1.6;
-  }
-
-  /* ABOUT TAGS */
-  .about-tags { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 2rem; }
-  .about-tag {
-    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--text-lt); border: 1px solid var(--glass-border);
-    padding: 0.28rem 0.75rem; border-radius: 100px;
-    background: rgba(255,255,255,0.45); backdrop-filter: blur(4px);
-  }
-
   @media (max-width: 900px) {
     nav { padding: 1.3rem 1.5rem; }
     #hero, #about, #map-section, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
     .about-inner { grid-template-columns: 1fr; gap: 3rem; }
     .about-imgs { height: 340px; }
     .map-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .hero-right { display: none; }
-    .gallery-strip { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .gallery-header { padding: 0 1.5rem; }
     .city-panel { height: auto; min-height: 260px; flex-direction: column; }
     .city-panel-header { flex: unset; border-right: none; border-bottom: 1px solid var(--glass-border); }
     footer { flex-direction: column; gap: 0.8rem; text-align: center; }
@@ -524,7 +452,6 @@
   <a href="#hero" class="nav-logo">MIO</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#map-section">Places</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -541,7 +468,6 @@
       街角的光，旅途的风，还有每天穿搭的小心情。
     </p>
   </div>
-  <div class="hero-right" id="hero-photos"></div>
   <div class="hero-scroll">
     <div class="scroll-line"></div>
     <span class="scroll-label">Scroll</span>
@@ -558,14 +484,6 @@
         <p>我是 <em>Mio</em>，一个喜欢用照片记录生活的普通女生。</p>
         <p>热爱时尚穿搭，但更享受把日常穿出自己的感觉。相机是我随身携带的日记本，记录路边盛开的野花、城市里有趣的光影，还有偶遇的流浪猫。</p>
         <p>这里是我的小小世界，欢迎你来逛逛。</p>
-      </div>
-      <div class="about-tags">
-        <span class="about-tag">摄影</span>
-        <span class="about-tag">旅行</span>
-        <span class="about-tag">穿搭</span>
-        <span class="about-tag">咖啡</span>
-        <span class="about-tag">猫</span>
-        <span class="about-tag">胶片</span>
       </div>
       <div class="about-stats">
         <div class="stat">
@@ -588,19 +506,6 @@
       <div class="about-img about-img-1" style="background-image:url('images/photo1.jpeg'); background-size:cover; background-position:center;"></div>
       <div class="about-img about-img-2" style="background-image:url('images/photo2.jpeg'); background-size:cover; background-position:center;"></div>
     </div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="gallery-header reveal">
-    <div>
-      <p class="section-label">Recent Photos</p>
-      <h2 class="section-title">最近的<em style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--rose);">记录</em></h2>
-    </div>
-  </div>
-  <div class="gallery-strip" id="gallery-strip">
-    <!-- populated by JS -->
   </div>
 </section>
 
@@ -730,8 +635,6 @@ function renderMapDots() {
 fetch('photos.json').then(r => r.json()).then(d => {
   allPhotos = d;
   renderMapDots();
-  populateHeroPolaroids(d);
-  populateGallery(d);
   updateStats(d);
 }).catch(() => renderMapDots());
 
@@ -861,53 +764,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  goToSlide(currentSlide - 1);
   if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
 });
-
-function populateHeroPolaroids(data) {
-  const container = document.getElementById('hero-photos');
-  if (!container) return;
-  const cities = Object.values(data).filter(arr => arr.length > 0);
-  const picked = cities.slice(0, 3).map(arr => arr[Math.floor(arr.length / 2)]);
-  if (!picked.length) return;
-  container.innerHTML = '';
-  picked.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'hero-polaroid';
-    const img = document.createElement('img');
-    img.src = p.src; img.alt = '';
-    div.appendChild(img);
-    container.appendChild(div);
-  });
-}
-
-function populateGallery(data) {
-  const strip = document.getElementById('gallery-strip');
-  if (!strip) return;
-  const all = Object.values(data).flat()
-    .sort((a, b) => b.date.localeCompare(a.date));
-  strip.innerHTML = '';
-  all.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'gallery-item';
-    const img = document.createElement('img');
-    img.src = p.src; img.alt = '';
-    const ov = document.createElement('div');
-    ov.className = 'gallery-item-overlay';
-    const meta = document.createElement('div');
-    meta.className = 'gallery-item-meta';
-    meta.innerHTML = (p.location ? p.location + '<br>' : '') + p.date;
-    ov.appendChild(meta);
-    item.appendChild(img);
-    item.appendChild(ov);
-    item.addEventListener('click', () => {
-      document.getElementById('lightbox-img').src = p.src;
-      document.getElementById('lightbox-meta').textContent =
-        [p.location, p.date].filter(Boolean).join('  ·  ');
-      document.getElementById('photo-lightbox').classList.add('visible');
-      clearInterval(carouselTimer);
-    });
-    strip.appendChild(item);
-  });
-}
 
 function updateStats(data) {
   const cities = Object.values(data).filter(arr => arr.length > 0).length;
