@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mio — 生活日记</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --rose:   #c9b8b8;
@@ -194,63 +196,40 @@
 
   .map-wrap {
     position: relative;
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 8px;
     box-shadow: 0 8px 32px var(--glass-shadow);
     overflow: hidden;
-    padding: 1.5rem;
-    cursor: grab;
-    user-select: none;
-  }
-  .map-wrap.dragging { cursor: grabbing; }
-
-  #world-map {
-    width: 100%;
-    height: auto;
-    display: block;
   }
 
-  .map-zoom-controls {
-    position: absolute; bottom: 1rem; right: 1rem;
-    display: flex; flex-direction: column; gap: 4px; z-index: 2;
-  }
-  .map-zoom-btn {
-    width: 26px; height: 26px;
-    background: var(--glass-bg); backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border); border-radius: 4px;
-    color: var(--text); font-size: 14px; line-height: 1;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
-  .map-zoom-btn:hover { background: rgba(201,184,184,0.3); }
+  #world-map { width: 100%; height: 400px; }
 
-  .map-city-dot {
-    cursor: pointer;
-    transition: all 0.3s;
+  /* Leaflet overrides */
+  .leaflet-container { background: #eae6e1; font-family: 'Jost', sans-serif; }
+  .leaflet-control-zoom a {
+    background: rgba(255,255,255,0.80) !important;
+    backdrop-filter: blur(8px);
+    border-color: var(--glass-border) !important;
+    color: var(--text) !important;
   }
-  .map-city-dot circle {
-    fill: var(--rose);
-    stroke: white;
-    stroke-width: 1.5;
-    filter: drop-shadow(0 2px 6px rgba(201,184,184,0.6));
-    transition: all 0.3s;
+  .leaflet-control-zoom a:hover { background: rgba(255,255,255,0.95) !important; }
+  .leaflet-control-attribution {
+    background: rgba(255,255,255,0.5) !important;
+    font-size: 9px; color: var(--text-lt);
   }
-  .map-city-dot:hover circle,
-  .map-city-dot.active circle {
-    fill: var(--text);
-    r: 7;
-  }
-  .map-city-dot text {
+  .leaflet-control-attribution a { color: var(--text-lt); }
+  .map-dot-tooltip {
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.5) !important;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
     font-family: 'Jost', sans-serif;
     font-size: 9px; font-weight: 300;
-    fill: var(--text); letter-spacing: 0.1em;
-    pointer-events: none;
-    opacity: 0; transition: opacity 0.3s;
+    letter-spacing: 0.12em; color: var(--text);
+    padding: 3px 8px;
   }
-  .map-city-dot:hover text,
-  .map-city-dot.active text { opacity: 1; }
+  .map-dot-tooltip::before { display: none; }
 
   /* CITY PANEL */
   .city-panel {
@@ -526,56 +505,7 @@
 
   <div class="map-layout reveal">
     <div class="map-wrap">
-      <!-- WORLD MAP SVG (simplified equirectangular projection) -->
-      <svg id="world-map" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
-        <!-- ocean background -->
-        <rect width="1000" height="500" fill="rgba(191,200,208,0.15)" rx="6"/>
-
-        <!-- Simplified continents -->
-        <!-- North America -->
-        <path d="M 80 60 L 160 55 L 200 70 L 210 90 L 220 110 L 215 135 L 200 155 L 190 180 L 175 200 L 160 215 L 145 225 L 130 220 L 120 200 L 110 180 L 95 160 L 80 140 L 70 115 L 68 90 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Central America / Caribbean -->
-        <path d="M 175 225 L 185 235 L 190 250 L 180 255 L 170 245 L 165 230 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- South America -->
-        <path d="M 195 255 L 230 245 L 260 255 L 275 280 L 280 310 L 275 340 L 265 370 L 250 395 L 235 415 L 220 425 L 205 415 L 195 395 L 185 365 L 180 335 L 178 305 L 180 275 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Greenland -->
-        <path d="M 175 30 L 210 25 L 230 35 L 225 55 L 205 60 L 185 55 L 170 45 Z" fill="rgba(212,204,196,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Europe -->
-        <path d="M 440 55 L 470 50 L 500 55 L 515 65 L 510 80 L 495 90 L 480 95 L 465 100 L 450 95 L 440 85 L 435 70 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Scandinavia -->
-        <path d="M 460 35 L 480 30 L 495 40 L 490 55 L 475 58 L 460 50 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Africa -->
-        <path d="M 450 115 L 490 110 L 520 120 L 535 145 L 540 175 L 535 210 L 525 245 L 510 275 L 495 300 L 480 315 L 465 310 L 450 295 L 438 265 L 430 235 L 428 205 L 430 175 L 435 145 L 440 125 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Madagascar -->
-        <path d="M 540 250 L 550 245 L 558 255 L 555 270 L 545 275 L 538 265 Z" fill="rgba(212,204,196,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Russia / North Asia -->
-        <path d="M 510 40 L 600 30 L 700 35 L 780 45 L 820 55 L 830 70 L 810 80 L 780 82 L 750 80 L 710 78 L 670 75 L 630 78 L 595 82 L 565 85 L 540 80 L 520 70 L 510 58 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Middle East -->
-        <path d="M 530 100 L 565 95 L 590 105 L 600 120 L 595 135 L 575 140 L 555 135 L 538 125 L 528 112 Z" fill="rgba(201,184,184,0.45)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- South Asia / India -->
-        <path d="M 610 110 L 645 105 L 670 115 L 675 135 L 670 160 L 660 185 L 645 200 L 630 195 L 618 178 L 610 155 L 605 130 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Southeast Asia -->
-        <path d="M 700 130 L 740 125 L 760 135 L 755 155 L 740 165 L 720 160 L 705 148 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- China / East Asia -->
-        <path d="M 680 75 L 750 72 L 790 80 L 800 95 L 795 115 L 780 130 L 755 135 L 725 130 L 700 125 L 678 115 L 668 98 L 670 85 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Korea peninsula -->
-        <path d="M 790 98 L 804 95 L 812 103 L 810 116 L 800 120 L 790 113 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Japan -->
-        <path d="M 818 85 L 835 80 L 845 88 L 842 100 L 830 105 L 818 98 Z" fill="rgba(184,196,188,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- Australia -->
-        <path d="M 760 290 L 820 275 L 870 280 L 900 300 L 910 330 L 900 360 L 875 380 L 840 390 L 805 385 L 775 370 L 755 345 L 748 315 Z" fill="rgba(212,204,196,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- New Zealand -->
-        <path d="M 920 365 L 932 358 L 938 368 L 932 378 L 920 375 Z" fill="rgba(212,204,196,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <!-- UK / Ireland -->
-        <path d="M 435 58 L 444 54 L 450 60 L 447 70 L 438 72 L 432 65 Z" fill="rgba(201,184,184,0.5)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-
-        <!-- city dots rendered dynamically by JS -->
-      </svg>
-      <div class="map-zoom-controls">
-        <button class="map-zoom-btn" id="zoom-in">+</button>
-        <button class="map-zoom-btn" id="zoom-out">−</button>
-        <button class="map-zoom-btn" id="zoom-reset" title="reset">⊙</button>
-      </div>
+      <div id="world-map"></div>
     </div>
 
     <!-- CITY PANEL -->
@@ -645,15 +575,21 @@ const cityData = {
   sanya:     { name: 'Sanya',     meta: '三亚 · 中国', lat: 18.25, lon: 109.51 },
 };
 
-function latLonToSVG(lat, lon) {
-  return { x: Math.round(lon * 2.731 + 448.58), y: Math.round(-lat * 1.974 + 168.42) };
-}
-
 let allPhotos = {};
+let leafletMap = null;
+let leafletMarkers = {};
 
 function renderMapDots() {
-  const svg = document.getElementById('world-map');
-  svg.querySelectorAll('.map-city-dot').forEach(d => d.remove());
+  if (!leafletMap) {
+    leafletMap = L.map('world-map', { center: [28, 100], zoom: 3, minZoom: 2, maxZoom: 10 });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(leafletMap);
+  }
+
+  Object.values(leafletMarkers).forEach(m => m.remove());
+  leafletMarkers = {};
 
   const active = Object.entries(cityData)
     .filter(([key]) => allPhotos[key] && allPhotos[key].length > 0);
@@ -661,17 +597,21 @@ function renderMapDots() {
   document.querySelector('.map-counter span').textContent = active.length || 0;
 
   active.forEach(([key, city]) => {
-    const { x, y } = latLonToSVG(city.lat, city.lon);
-    const fx = x + (city.dx || 0), fy = y + (city.dy || 0);
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.classList.add('map-city-dot');
-    g.dataset.city = key;
-    g.setAttribute('transform', `translate(${fx},${fy})`);
-    g.innerHTML = `<circle r="5"/><text x="${city.lx ?? 8}" y="${city.ly ?? -8}">${city.name}</text>`;
-    svg.appendChild(g);
+    const marker = L.circleMarker([city.lat, city.lon], {
+      radius: 7, fillColor: '#c9b8b8', color: 'white', weight: 2, opacity: 1, fillOpacity: 1
+    }).addTo(leafletMap);
+    marker.bindTooltip(city.name, { permanent: false, direction: 'top', className: 'map-dot-tooltip' });
+    marker.on('click', () => {
+      Object.values(leafletMarkers).forEach(m => m.setStyle({ fillColor: '#c9b8b8', radius: 7 }));
+      marker.setStyle({ fillColor: '#5a5250', radius: 9 });
+      panelCityName.textContent = city.name;
+      panelCityMeta.textContent = city.meta;
+      panelHeader.style.display = 'block';
+      panelHint.style.display = 'none';
+      startCarousel(allPhotos[key] || []);
+    });
+    leafletMarkers[key] = marker;
   });
-
-  attachDotHandlers();
 }
 
 fetch('photos.json').then(r => r.json()).then(d => { allPhotos = d; renderMapDots(); }).catch(() => renderMapDots());
@@ -777,128 +717,14 @@ function startCarousel(photos) {
   resetTimer();
 }
 
-// Map interaction — called after dots are rendered
 const panelHeader   = document.getElementById('panel-header');
 const panelHint     = document.getElementById('panel-hint');
 const panelCityName = document.getElementById('panel-city-name');
 const panelCityMeta = document.getElementById('panel-city-meta');
 
-function attachDotHandlers() {
-  document.querySelectorAll('.map-city-dot').forEach(dot => {
-    dot.addEventListener('click', () => {
-      if (mapDragged) return;
-      const city = dot.dataset.city;
-      const data = cityData[city];
-      document.querySelectorAll('.map-city-dot').forEach(d => d.classList.remove('active'));
-      dot.classList.add('active');
-      panelCityName.textContent = data.name;
-      panelCityMeta.textContent = data.meta;
-      panelHeader.style.display = 'block';
-      panelHint.style.display = 'none';
-      startCarousel(allPhotos[city] || []);
-    });
-  });
-}
-
-// Lightbox close
 document.getElementById('photo-lightbox').addEventListener('click', function(e) {
   if (e.target === this) this.classList.remove('visible');
 });
-
-// Map zoom & pan
-let mapDragged = false;
-(function () {
-  const svg  = document.getElementById('world-map');
-  const wrap = svg.closest('.map-wrap');
-  const INIT = { x: 0, y: 0, w: 1000, h: 500 };
-  const MIN_W = 120, MAX_W = 1000;
-  let vb = { ...INIT };
-
-  function apply() {
-    svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
-  }
-
-  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-
-  function svgPt(clientX, clientY) {
-    const r = svg.getBoundingClientRect();
-    return {
-      x: vb.x + (clientX - r.left)  / r.width  * vb.w,
-      y: vb.y + (clientY - r.top)   / r.height * vb.h,
-    };
-  }
-
-  function zoomTo(factor, cx, cy) {
-    const newW = clamp(vb.w * factor, MIN_W, MAX_W);
-    const newH = newW * 0.5;
-    const k    = newW / vb.w;
-    vb.x = clamp(cx - (cx - vb.x) * k, -200, 1200 - newW);
-    vb.y = clamp(cy - (cy - vb.y) * k, -100,  600 - newH);
-    vb.w = newW; vb.h = newH;
-    apply();
-  }
-
-  // Wheel
-  svg.addEventListener('wheel', e => {
-    e.preventDefault();
-    const { x, y } = svgPt(e.clientX, e.clientY);
-    zoomTo(e.deltaY > 0 ? 1.18 : 0.85, x, y);
-  }, { passive: false });
-
-  // Mouse drag
-  let drag = null;
-  svg.addEventListener('mousedown', e => {
-    drag = { sx: e.clientX, sy: e.clientY, vbx: vb.x, vby: vb.y };
-    mapDragged = false;
-    wrap.classList.add('dragging');
-  });
-  window.addEventListener('mousemove', e => {
-    if (!drag) return;
-    if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 4) mapDragged = true;
-    const r  = svg.getBoundingClientRect();
-    vb.x = drag.vbx - (e.clientX - drag.sx) / r.width  * vb.w;
-    vb.y = drag.vby - (e.clientY - drag.sy) / r.height * vb.h;
-    apply();
-  });
-  window.addEventListener('mouseup', () => { drag = null; wrap.classList.remove('dragging'); });
-
-  // Touch drag & pinch
-  let t0 = null, pinchDist = null;
-  svg.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) {
-      t0 = { x: e.touches[0].clientX, y: e.touches[0].clientY, vbx: vb.x, vby: vb.y };
-      mapDragged = false;
-    } else if (e.touches.length === 2) {
-      pinchDist = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY);
-    }
-  }, { passive: true });
-  svg.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (e.touches.length === 2 && pinchDist) {
-      const d  = Math.hypot(e.touches[0].clientX - e.touches[1].clientX,
-                             e.touches[0].clientY - e.touches[1].clientY);
-      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      const p  = svgPt(cx, cy);
-      zoomTo(pinchDist / d, p.x, p.y);
-      pinchDist = d;
-    } else if (e.touches.length === 1 && t0) {
-      const r  = svg.getBoundingClientRect();
-      if (Math.hypot(e.touches[0].clientX - t0.x, e.touches[0].clientY - t0.y) > 4) mapDragged = true;
-      vb.x = t0.vbx - (e.touches[0].clientX - t0.x) / r.width  * vb.w;
-      vb.y = t0.vby - (e.touches[0].clientY - t0.y) / r.height * vb.h;
-      apply();
-    }
-  }, { passive: false });
-  svg.addEventListener('touchend', () => { t0 = null; pinchDist = null; });
-
-  // Buttons
-  document.getElementById('zoom-in').addEventListener('click',    () => zoomTo(0.65, vb.x + vb.w / 2, vb.y + vb.h / 2));
-  document.getElementById('zoom-out').addEventListener('click',   () => zoomTo(1.55, vb.x + vb.w / 2, vb.y + vb.h / 2));
-  document.getElementById('zoom-reset').addEventListener('click', () => { vb = { ...INIT }; apply(); });
-})();
 
 // Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
