@@ -344,6 +344,19 @@
     font-size: 0.72rem; letter-spacing: 0.18em;
     color: var(--text-lt); text-transform: uppercase; opacity: 0.8;
   }
+  .lightbox-glass { position: relative; }
+  .lightbox-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.35); border: 1px solid rgba(255,255,255,0.5);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    color: var(--text); font-size: 1.4rem; line-height: 1;
+    width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; z-index: 1;
+  }
+  .lightbox-arrow:hover { background: rgba(255,255,255,0.65); }
+  .lightbox-arrow.prev { left: 0.5rem; }
+  .lightbox-arrow.next { right: 0.5rem; }
 
   /* CONTACT */
   #contact {
@@ -552,7 +565,9 @@
 
 <div id="photo-lightbox">
   <div class="lightbox-glass">
+    <button class="lightbox-arrow prev" id="lb-prev">&#8249;</button>
     <img id="lightbox-img" src="" alt="">
+    <button class="lightbox-arrow next" id="lb-next">&#8250;</button>
     <div class="lightbox-meta" id="lightbox-meta"></div>
   </div>
 </div>
@@ -619,16 +634,24 @@ fetch('photos.json').then(r => r.json()).then(d => { allPhotos = d; renderMapDot
 // Carousel state
 let carouselTimer = null;
 let currentSlide = 0;
+let currentSlides = [];
 let _enterH = null, _leaveH = null;
 
-function goToSlide(index, slides) {
-  slides[currentSlide].classList.remove('active');
-  currentSlide = (index + slides.length) % slides.length;
-  slides[currentSlide].classList.add('active');
-  // sync lightbox if open
+function resetCarouselTimer() {
+  clearInterval(carouselTimer);
+  const lb = document.getElementById('photo-lightbox');
+  if (currentSlides.length > 1 && !lb.classList.contains('visible'))
+    carouselTimer = setInterval(() => goToSlide(currentSlide + 1), 3500);
+}
+
+function goToSlide(index) {
+  if (!currentSlides.length) return;
+  currentSlides[currentSlide].classList.remove('active');
+  currentSlide = (index + currentSlides.length) % currentSlides.length;
+  currentSlides[currentSlide].classList.add('active');
   const lb = document.getElementById('photo-lightbox');
   if (lb.classList.contains('visible')) {
-    const sl = slides[currentSlide];
+    const sl = currentSlides[currentSlide];
     if (sl.dataset.src) {
       document.getElementById('lightbox-img').src = sl.dataset.src;
       document.getElementById('lightbox-meta').textContent =
@@ -679,42 +702,36 @@ function startCarousel(photos) {
     track.appendChild(slide);
   });
 
-  const slides = track.querySelectorAll('.city-slide');
+  currentSlides = Array.from(track.querySelectorAll('.city-slide'));
 
   // Arrows
   [['prev', '‹', -1], ['next', '›', 1]].forEach(([cls, icon, delta]) => {
     const btn = document.createElement('button');
     btn.className = `carousel-arrow ${cls}`;
     btn.innerHTML = icon;
-    btn.addEventListener('click', () => { goToSlide(currentSlide + delta, slides); resetTimer(); });
+    btn.addEventListener('click', () => { goToSlide(currentSlide + delta); resetCarouselTimer(); });
     carousel.appendChild(btn);
   });
 
-  function resetTimer() {
-    clearInterval(carouselTimer);
-    if (slides.length > 1)
-      carouselTimer = setInterval(() => goToSlide(currentSlide + 1, slides), 3500);
-  }
-
   // Hover: pause auto-play only
   _enterH = () => clearInterval(carouselTimer);
-  _leaveH = () => resetTimer();
+  _leaveH = () => resetCarouselTimer();
   carousel.addEventListener('mouseenter', _enterH);
   carousel.addEventListener('mouseleave', _leaveH);
 
-  // Click: open lightbox
+  // Click: open lightbox (pauses auto-play)
   track.style.cursor = 'zoom-in';
   track.addEventListener('click', () => {
-    const src = slides[currentSlide].dataset.src;
-    const p   = photos[currentSlide];
-    if (!src) return;
-    document.getElementById('lightbox-img').src = src;
+    const sl = currentSlides[currentSlide];
+    if (!sl || !sl.dataset.src) return;
+    document.getElementById('lightbox-img').src = sl.dataset.src;
     document.getElementById('lightbox-meta').textContent =
-      [p.location, p.date].filter(Boolean).join('  ·  ');
+      [sl.dataset.location, sl.dataset.date].filter(Boolean).join('  ·  ');
     document.getElementById('photo-lightbox').classList.add('visible');
+    clearInterval(carouselTimer);
   });
   carousel.style.display = 'flex';
-  resetTimer();
+  resetCarouselTimer();
 }
 
 const panelHeader   = document.getElementById('panel-header');
@@ -722,8 +739,23 @@ const panelHint     = document.getElementById('panel-hint');
 const panelCityName = document.getElementById('panel-city-name');
 const panelCityMeta = document.getElementById('panel-city-meta');
 
+function closeLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('visible');
+  resetCarouselTimer();
+}
+
 document.getElementById('photo-lightbox').addEventListener('click', function(e) {
-  if (e.target === this) this.classList.remove('visible');
+  if (e.target === this) closeLightbox();
+});
+document.getElementById('lb-prev').addEventListener('click', () => goToSlide(currentSlide - 1));
+document.getElementById('lb-next').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('photo-lightbox');
+  if (!lb.classList.contains('visible')) return;
+  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'ArrowLeft')  goToSlide(currentSlide - 1);
+  if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
 });
 
 // Scroll reveal
